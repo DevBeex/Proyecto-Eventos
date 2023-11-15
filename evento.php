@@ -97,8 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         http_response_code($dataArray["result"]["error_id"]);
         echo json_encode($dataArray);
     }
-}
- else {
+} else {
     header('Content-Type: application/json');
     $dataArray = $_responses->error_405();
     echo json_encode($dataArray);
