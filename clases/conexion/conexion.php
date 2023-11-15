@@ -67,7 +67,6 @@ class conection {
 
     protected function encript($string){
         return md5($string);
-
     }
 }   
 ?>

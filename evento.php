@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Enviar los datos al método editEvent
-    $dataArray = $_event->editEvent($eventId,$putData);
+    $dataArray = $_event->editEvent($eventId, $putData);
 
     // Devolver respuestas
     header('Content-Type: application/json');
@@ -47,8 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         http_response_code(200);
     }
     echo json_encode($dataArray);
-
-}elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+} elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
     // Obtener idEvento de la URL
     $postBody = file_get_contents("php://input");
     $data = json_decode($postBody, true);
@@ -64,11 +63,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         http_response_code(200);
     }
     echo json_encode($dataArray);
-}else {
+} elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    if (isset($_GET['action'])) {
+        $action = $_GET['action'];
+        switch ($action) {
+            case 'get-all-events':
+                // Enviar los datos al método getAllEvents
+                $dataArray = $_event->getAllEvents();
+                break;
+            case 'get-user-events-created':
+                // Obtener el id del usuario de la URL
+                $userId = $_GET['userId'];
+                // Llamar al método getEventsByUser
+                $dataArray = $_event->getEventsByUser($userId);
+                break;
+            default:
+                // Acción no válida
+                $dataArray = $_responses->error_400(); // Bad Request
+        }
+
+        // Devolver respuestas
+        header('Content-Type: application/json');
+        if (isset($dataArray["result"]["error_id"])) {
+            $responseCode = $dataArray["result"]["error_id"];
+            http_response_code($responseCode);
+        } else {
+            http_response_code(200);
+        }
+        echo json_encode($dataArray);
+    } else {
+        $dataArray = $_responses->error_400(); // Bad Request
+        header('Content-Type: application/json');
+        http_response_code($dataArray["result"]["error_id"]);
+        echo json_encode($dataArray);
+    }
+}
+ else {
     header('Content-Type: application/json');
     $dataArray = $_responses->error_405();
     echo json_encode($dataArray);
 }
-
-
-?>

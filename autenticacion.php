@@ -35,8 +35,6 @@ if ($_SERVER['REQUEST_METHOD']== 'POST'){
     }
     
 
-
-
     //Devolvemos respuestas
     header('Content-Type: application/json');
 
