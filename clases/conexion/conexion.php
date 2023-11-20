@@ -65,6 +65,7 @@ class conection {
         }
     }
 
+    //Encriptar la contrasena
     protected function encript($string){
         return md5($string);
     }
