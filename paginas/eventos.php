@@ -1,6 +1,12 @@
 <?php
 include_once('../clases/eventos.class.php');
 
+session_start();
+// if (!isset($_SESSION['user_id'])) {
+//     echo "Debes iniciar sesión para ver los eventos.";
+//     exit();
+// }
+
 $_event = new event;
 
 // Obtener el array de eventos
@@ -56,15 +62,14 @@ if ($dataArray['status'] === 'ok') {
 
 
                 <!-- Icono para apuntarse al evento -->
-                <span class="icon-container" onclick="apuntarseAlEvento(<?php echo $evento['idEvento']; ?>)">
-                    <i class="fas fa-check card-icon"></i>
+                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'apuntarse')">
+                    <i class="fa-solid fa-user-plus"></i>
                 </span>
 
                 <!-- Icono para añadir a favoritos -->
-                <span class="icon-container" onclick="añadirAFavoritos(<?php echo $evento['idEvento']; ?>)">
+                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'favoritos')">
                     <i class="fas fa-star card-icon"></i>
                 </span>
-
 
 
             </a>

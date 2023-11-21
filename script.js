@@ -63,3 +63,93 @@ window.addEventListener("scroll", function () {
 
     console.log(navbar.classList.contains("scroll")); // Agrega este console.log para verificar
 });
+
+// Función para manejar la lógica de apuntarse al evento
+function apuntarseAlEvento(idEvento) {
+    // Aquí puedes realizar las acciones necesarias
+    console.log(`Apuntándote al evento ${idEvento}`);
+}
+
+// Función para manejar la lógica de añadir a favoritos
+function añadirAFavoritos(idEvento) {
+    // Aquí puedes realizar las acciones necesarias
+    console.log(`Añadiendo a favoritos el evento ${idEvento}`);
+}
+
+function handleEventAction(eventId, action) {
+    // Verificar si el usuario ha iniciado sesión
+    const userId = <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null'; ?>;
+
+    if (userId) {
+        // El usuario ha iniciado sesión, puedes continuar con el flujo normal
+        if (action === 'apuntarse') {
+            apuntarseAlEvento(eventId);
+        } else if (action === 'favoritos') {
+            añadirAFavoritos(eventId);
+        }
+    } else {
+        // El usuario no ha iniciado sesión, mostrar un modal o realizar acciones adicionales
+        showLoginModal();
+    }
+}
+
+function showLoginModal() {
+    // Crear el fondo difuminado
+    const overlay = document.createElement('div');
+    overlay.classList.add('modal-overlay');
+    document.body.appendChild(overlay);
+
+    // Crear el modal y su contenido
+    const modalContent = `
+        <div class="modal">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-content">
+                <p>Debes iniciar sesión para apuntarte a eventos o añadir a favoritos.</p>
+            </div>
+        </div>
+    `;
+
+    // Agregar el modal al final del body
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+
+    // Mostrar el fondo y el modal
+    overlay.style.display = 'block';
+    document.querySelector('.modal').style.display = 'block';
+
+    // Evitar que el clic en el fondo difuminado se propague al contenedor principal
+    overlay.addEventListener('click', function (event) {
+        event.stopPropagation();
+    });
+}
+
+
+function closeModal() {
+    // Ocultar el fondo y el modal
+    const overlay = document.querySelector('.modal-overlay');
+    const modal = document.querySelector('.modal');
+    
+    if (overlay && modal) {
+        overlay.style.display = 'none';
+        modal.style.display = 'none';
+
+        // Eliminar el fondo difuminado y el modal del DOM
+        overlay.remove();
+        modal.remove();
+    }
+}
+
+// Agrega esta función para mostrar mensajes
+function showMessage(message, iconClass, messageType) {
+    const modalContent = `
+        <div class="modal">
+            <div class="modal-content ${messageType}">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <i class="${iconClass}"></i>
+                <p>${message}</p>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+}
+
+// ... Otro código JavaScript ...

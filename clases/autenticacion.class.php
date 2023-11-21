@@ -1,6 +1,7 @@
 <?php
 require_once 'conexion/conexion.php';
 require_once 'respuestas.class.php';
+session_start();
 
 class Auth extends conection {
 
@@ -34,10 +35,11 @@ class Auth extends conection {
                     $result['result'] = array(
                         "message" => "Login exitoso para el usuario '$correoElectronico'"
                     );
-                    print_r($_SESSION);
+                    
                     return $result;
                 } else {
                     // La contraseña no es igual
+                    
                     return $_responses->error_200("Contraseña inválida");
                 }
             } else {

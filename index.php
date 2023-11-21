@@ -1,4 +1,7 @@
-<?php require_once './clases/eventos.class.php';?>
+<?php require_once './clases/eventos.class.php';
+session_start();
+// var_dump($_SESSION);
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
