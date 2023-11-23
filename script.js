@@ -1,3 +1,4 @@
+
 const navbarMenu = document.querySelector(".navbar .links");
 const hamburgerBtn = document.querySelector(".hamburger-btn");
 const hideMenuBtn = navbarMenu.querySelector(".close-btn");
@@ -6,6 +7,46 @@ const formPopup = document.querySelector(".form-popup");
 const hidePopupBtn = formPopup.querySelector(".close-btn");
 const signupLoginLink = formPopup.querySelectorAll(".bottom-link a");
 const contentContainer = document.getElementById("content-container");
+
+function showMessage(message, iconClass, messageType) {
+    const overlay = document.createElement('div');
+    overlay.classList.add('modal-overlay');
+    document.body.appendChild(overlay);
+
+    const modalContent = `
+        <div class="modal">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-content ${messageType}">
+                <p>${message}</p>
+                <i class="${iconClass}"></i>
+            </div>
+        </div>
+    `;
+    // Agregar el modal al final del body
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+
+    // Mostrar el fondo y el modal
+    overlay.style.display = 'block';
+    const modal = document.querySelector('.modal');
+    modal.style.display = 'block';
+
+    // Estilos adicionales para centrar y ajustar el tamaño del icono
+    const modalContentElement = modal.querySelector('.modal-content');
+    modalContentElement.style.display = 'flex';
+    modalContentElement.style.flexDirection = 'column';
+    modalContentElement.style.alignItems = 'center';
+    modalContentElement.style.textAlign = 'center';
+
+    const iconElement = modal.querySelector('i');
+    iconElement.style.fontSize = '2em'; // Ajusta el tamaño del icono según tus preferencias
+
+    // Evitar que el clic en el fondo difuminado se propague al contenedor principal
+    overlay.addEventListener('click', function (event) {
+        event.stopPropagation();
+    });
+}
+
+
 
 // Show mobile menu
 hamburgerBtn.addEventListener("click", () => {
@@ -74,21 +115,60 @@ function apuntarseAlEvento(idEvento) {
 }
 
 // Función para manejar la lógica de añadir a favoritos
-function añadirAFavoritos(idEvento) {
-    // Aquí puedes realizar las acciones necesarias
-    console.log(`Añadiendo a favoritos el evento ${idEvento}`);
+function añadirAFavoritos(idEvento, userId) {
+    // Verificar si el usuario ha iniciado sesión
+    if (userId) {
+        // Realizar la petición AJAX para agregar el evento a favoritos
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "favorito.php", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        const data = {
+            eventId: idEvento,
+            userId: userId
+        };
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // La petición fue exitosa
+                    const response = JSON.parse(xhr.responseText);
+
+                    if (response.status === 'ok') {
+                        // La operación fue exitosa, mostrar un mensaje de éxito
+                        console.log('Operación exitosa:', response.result.message);
+                        showMessage(response.result.message, 'fas fa-check-circle', 'success');
+                    } else {
+                        // La operación falló, mostrar un mensaje de error
+                        console.log('Error en la operación:', response.result.error_msg);
+                        showMessage(response.result.error_msg, 'fas fa-exclamation-circle', 'error');
+                    }
+                } else {
+                    // La petición falló, puedes mostrar un mensaje de error
+                    console.log('Error en la petición:', xhr.status, xhr.statusText);
+                    showMessage('Ya esta agregado a favoritos', 'fas fa-exclamation-circle', 'error');
+                }
+            }
+        };
+
+        xhr.send(JSON.stringify(data));
+
+    } else {
+        // El usuario no ha iniciado sesión, mostrar un modal o realizar acciones adicionales
+        console.log('Usuario no ha iniciado sesión');
+        showLoginModal();
+    }
 }
 
-function handleEventAction(eventId, action) {
-    // Verificar si el usuario ha iniciado sesión
-    const userId = <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null'; ?>;
 
+function handleEventAction(eventId, action, userId) {
+    // Verificar si el usuario ha iniciado sesión
     if (userId) {
         // El usuario ha iniciado sesión, puedes continuar con el flujo normal
         if (action === 'apuntarse') {
-            apuntarseAlEvento(eventId);
+            apuntarseAlEvento(eventId, userId);
         } else if (action === 'favoritos') {
-            añadirAFavoritos(eventId);
+            añadirAFavoritos(eventId, userId);
         }
     } else {
         // El usuario no ha iniciado sesión, mostrar un modal o realizar acciones adicionales
@@ -141,18 +221,3 @@ function closeModal() {
     }
 }
 
-// Agrega esta función para mostrar mensajes
-function showMessage(message, iconClass, messageType) {
-    const modalContent = `
-        <div class="modal">
-            <div class="modal-content ${messageType}">
-                <span class="close-btn" onclick="closeModal()">&times;</span>
-                <i class="${iconClass}"></i>
-                <p>${message}</p>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', modalContent);
-}
-
-// ... Otro código JavaScript ...

@@ -3,12 +3,14 @@ require_once 'conexion/conexion.php';
 require_once 'respuestas.class.php';
 session_start();
 
-class Auth extends conection {
+class Auth extends conection
+{
 
-    public function login($json) {
+    public function login($json)
+    {
         $_responses = new responses;
         $data = json_decode($json, true);
-    
+
         if (!isset($data["correoElectronico"]) || !isset($data["contrasena"])) {
             // Error
             return $_responses->error_400();
@@ -17,7 +19,7 @@ class Auth extends conection {
             $contrasena = $data["contrasena"];
             $contrasena = parent::encript($contrasena);
             $userData = $this->getUserData($correoElectronico);
-    
+
             if ($userData) {
                 // Verificar si la contraseña es igual
                 if ($contrasena == $userData[0]["contrasena"]) {
@@ -30,29 +32,36 @@ class Auth extends conection {
                         'correoElectronico' => $userData[0]['correoElectronico'],
                         'rol' => $userData[0]['rol']
                     );
-    
+
                     $result = $_responses->response;
                     $result['result'] = array(
                         "message" => "Login exitoso para el usuario '$correoElectronico'"
                     );
-                    
+
                     return $result;
                 } else {
                     // La contraseña no es igual
-                    
-                    return $_responses->error_200("Contraseña inválida");
+                    // Mostrar un mensaje de error como una alerta
+                    echo '<script>alert("Usuario no encontrado o contraseña no válida");</script>';
+                    echo '<script>window.location.href = "index.php";</script>';
+                    exit();
                 }
             } else {
-                // No existe el usuario
-                return $_responses->error_200("El usuario '$correoElectronico' no existe");
+                // No existe el usuario o no hay contraseña
+                // Mostrar un mensaje de error como una alerta
+                echo '<script>alert("Usuario no encontrado o contraseña no válida");</script>';
+                echo '<script>window.location.href = "index.php";</script>';
+                // return $_responses->error_200("Usuario no encontrado o contraseña no válida");
+                exit();
             }
         }
     }
 
-    public function registerUser($json) {
+    public function registerUser($json)
+    {
         $_responses = new Responses;
         $data = json_decode($json, true);
-    
+
         // Verifica que los datos necesarios estén presentes
         if (
             !isset($data["nombre"]) ||
@@ -63,21 +72,21 @@ class Auth extends conection {
         ) {
             return $_responses->error_400();
         }
-    
+
         $nombre = $data["nombre"];
         $apellido = $data["apellido"];
         $correoElectronico = $data["correoElectronico"];
         $contrasena = $data["contrasena"];
         $rol = $data["rol"];
-    
+
         // Encripta la contraseña
         $contrasenaEncriptada = parent::encript($contrasena);
-    
+
         try {
             // Realiza la inserción en la base de datos
             $query = "INSERT INTO usuario (nombre, apellido, correoElectronico, contrasena, rol) VALUES ('$nombre', '$apellido', '$correoElectronico', '$contrasenaEncriptada', '$rol');";
             $insertedUserId = parent::nonQueryId($query);
-    
+
             if ($insertedUserId > 0) {
                 $result = $_responses->response;
                 $result['result'] = array(
@@ -97,10 +106,11 @@ class Auth extends conection {
             }
         }
     }
-    
-    
 
-    private function getUserData($email) {
+
+
+    private function getUserData($email)
+    {
         $query = "SELECT * FROM usuario WHERE correoElectronico = '$email';";
         $data = parent::getData($query);
         if (isset($data[0]["idUsuario"])) {
@@ -109,8 +119,4 @@ class Auth extends conection {
             return 0;
         }
     }
-
-
 }
-
-?>

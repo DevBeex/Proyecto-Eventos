@@ -62,12 +62,12 @@ if ($dataArray['status'] === 'ok') {
 
 
                 <!-- Icono para apuntarse al evento -->
-                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'apuntarse')">
+                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'apuntarse', <?php echo isset($_SESSION['usuario']['idUsuario']) ? $_SESSION['usuario']['idUsuario'] : 'null'; ?>)">
                     <i class="fa-solid fa-user-plus"></i>
                 </span>
 
                 <!-- Icono para añadir a favoritos -->
-                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'favoritos')">
+                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'favoritos', <?php echo isset($_SESSION['usuario']['idUsuario']) ? $_SESSION['usuario']['idUsuario'] : 'null'; ?>)">
                     <i class="fas fa-star card-icon"></i>
                 </span>
 

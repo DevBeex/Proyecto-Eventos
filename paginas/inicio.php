@@ -2,6 +2,7 @@
     <!-- Contenido de inicio.php -->
 
     <?php
+    session_start();
     // Verificar si hay un mensaje en la URL
     if (isset($_GET['mensaje'])) {
         if ($_GET['mensaje'] === 'exito') {
@@ -18,7 +19,14 @@
     if (isset($_SESSION['usuario'])) {
         // Mostrar un saludo personalizado
         echo '<p>Hola, ' . $_SESSION['usuario']['nombre'] . '!</p>';
+        // Imprimir todo el contenido de $_SESSION['usuario']
+        echo '<pre>';
+        print_r($_SESSION['usuario']);
+        echo '</pre>';
+    } else {
+        echo "Hola Invitado";
     }
     ?>
-</div>
 
+    
+</div>

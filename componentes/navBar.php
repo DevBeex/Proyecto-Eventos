@@ -11,6 +11,7 @@
             <li><a href="#eventos">Eventos</a></li>
             <li><a href="#">Mis eventos</a></li>
             <li><a href="#">Apuntados</a></li>
+            <li><a href="#">Favoritos</a></li>
             <li><a href="#">API</a></li>
         </ul>
         <?php

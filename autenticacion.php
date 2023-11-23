@@ -32,7 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($dataArray['status'] === 'ok') {
                 $_SESSION['mensaje'] = "¡Inicio de sesión exitoso para el usuario '$correoElectronico'!";
                 // Redirigir a inicio.php con el mensaje como parámetro de URL
-                header('Location: index.php?mensaje=exito');
+                // header('Location: index.php?mensaje=exito');
+                echo '<script>';
+                echo 'window.location.href = "index.php?mensaje=exito";';
+                echo '</script>';
                 exit();
             }
             break;
