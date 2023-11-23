@@ -3,6 +3,7 @@
 
     <?php
     session_start();
+    
     // Verificar si hay un mensaje en la URL
     if (isset($_GET['mensaje'])) {
         if ($_GET['mensaje'] === 'exito') {
@@ -17,6 +18,7 @@
     // Verificar si el usuario ha iniciado sesión
     // (Puedes agregar esta comprobación si es necesaria para otros mensajes)
     if (isset($_SESSION['usuario'])) {
+
         // Mostrar un saludo personalizado
         echo '<p>Hola, ' . $_SESSION['usuario']['nombre'] . '!</p>';
         // Imprimir todo el contenido de $_SESSION['usuario']

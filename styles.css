@@ -510,3 +510,52 @@ form button:hover {
 .close-btn:hover {
     color: #555;
 }
+
+/* Agrega estos estilos para los iconos */
+.icon-container {
+    display: inline-block;
+    cursor: pointer;
+    margin-right: 10px; /* Espaciado entre iconos */
+}
+
+.icon-container i {
+    font-size: 24px; /* Tamaño del icono */
+    transition: color 0.3s ease; /* Efecto de transición para el cambio de color al hacer hover */
+}
+
+.icon-container:hover i {
+    color: #19e8ff; /* Color al hacer hover */
+}
+
+/* Agrega estos estilos al final de tu archivo CSS */
+.modal-success {
+    background-color: #4CAF50; /* Verde o el color que desees para mensajes de éxito */
+    color: #fff; /* Color de texto en mensajes de éxito */
+}
+
+.modal-error {
+    background-color: #f44336; /* Rojo o el color que desees para mensajes de error */
+    color: #fff; /* Color de texto en mensajes de error */
+}
+
+.error-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 20px;
+    background-color: #ccd8ff;
+    border: 1px solid #8a0000;
+    border-radius: 5px;
+    color: #000000;
+    z-index: 999; /* Ajusta este valor según sea necesario para que aparezca sobre otros elementos */
+  }
+  
+  /* Opcional: Ajusta estilos para mejorar la apariencia */
+  .error-message p {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  

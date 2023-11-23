@@ -9,23 +9,29 @@ const signupLoginLink = formPopup.querySelectorAll(".bottom-link a");
 const contentContainer = document.getElementById("content-container");
 
 function showMessage(message, iconClass, messageType) {
+    // Crear overlay
     const overlay = document.createElement('div');
     overlay.classList.add('modal-overlay');
     document.body.appendChild(overlay);
 
+    // Establecer el color de fondo según el tipo de mensaje
+    const modalColorClass = messageType === 'success' ? 'modal-success' : 'modal-error';
+
+    // Crear modal con contenido dinámico
     const modalContent = `
-        <div class="modal">
+        <div class="modal ${modalColorClass}">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div class="modal-content ${messageType}">
-                <p>${message}</p>
+            <div class="modal-content">
                 <i class="${iconClass}"></i>
+                <p>${message}</p>
             </div>
         </div>
     `;
-    // Agregar el modal al final del body
+
+    // Agregar modal al final del body
     document.body.insertAdjacentHTML('beforeend', modalContent);
 
-    // Mostrar el fondo y el modal
+    // Mostrar overlay y modal
     overlay.style.display = 'block';
     const modal = document.querySelector('.modal');
     modal.style.display = 'block';
@@ -37,6 +43,7 @@ function showMessage(message, iconClass, messageType) {
     modalContentElement.style.alignItems = 'center';
     modalContentElement.style.textAlign = 'center';
 
+    // Ajustar el tamaño del icono
     const iconElement = modal.querySelector('i');
     iconElement.style.fontSize = '2em'; // Ajusta el tamaño del icono según tus preferencias
 
@@ -45,8 +52,6 @@ function showMessage(message, iconClass, messageType) {
         event.stopPropagation();
     });
 }
-
-
 
 // Show mobile menu
 hamburgerBtn.addEventListener("click", () => {
@@ -160,6 +165,49 @@ function añadirAFavoritos(idEvento, userId) {
     }
 }
 
+// Nueva función para manejar la lógica de quitar de favoritos
+function quitarDeFavoritos(eventId, userId) {
+    // Realizar la petición AJAX para quitar el evento de favoritos
+    const xhr = new XMLHttpRequest();
+    xhr.open("DELETE", "favorito.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    const data = {
+        eventId: eventId,
+        userId: userId
+    };
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // La petición fue exitosa
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.status === 'ok') {
+                    // La operación fue exitosa, mostrar un mensaje de éxito
+                    console.log('Operación exitosa:', response.result.message);
+                    // Puedes realizar acciones adicionales aquí, como actualizar la interfaz de usuario
+                    showMessage(response.result.message, 'fas fa-check-circle', 'success');
+                    
+                    // Cargar nuevamente el contenido del tab de "Favoritos"
+                    loadPage('favoritos');
+                } else {
+                    // La operación falló, mostrar un mensaje de error
+                    console.log('Error en la operación:', response.result.error_msg);
+                    showMessage(response.result.error_msg, 'fas fa-exclamation-circle', 'error');
+                }
+            } else {
+                // La petición falló, puedes mostrar un mensaje de error
+                console.log('Error en la petición:', xhr.status, xhr.statusText);
+                showMessage('Error en la petición', 'fas fa-exclamation-circle', 'error');
+            }
+        }
+    };
+
+    xhr.send(JSON.stringify(data));
+}
+
+
 
 function handleEventAction(eventId, action, userId) {
     // Verificar si el usuario ha iniciado sesión
@@ -169,6 +217,8 @@ function handleEventAction(eventId, action, userId) {
             apuntarseAlEvento(eventId, userId);
         } else if (action === 'favoritos') {
             añadirAFavoritos(eventId, userId);
+        } else if (action === 'quitarFavoritos') {
+            quitarDeFavoritos(eventId, userId);
         }
     } else {
         // El usuario no ha iniciado sesión, mostrar un modal o realizar acciones adicionales
