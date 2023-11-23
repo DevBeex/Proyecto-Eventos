@@ -52,7 +52,7 @@ class Auth extends conection {
     public function registerUser($json) {
         $_responses = new Responses;
         $data = json_decode($json, true);
-
+    
         // Verifica que los datos necesarios estén presentes
         if (
             !isset($data["nombre"]) ||
@@ -63,31 +63,42 @@ class Auth extends conection {
         ) {
             return $_responses->error_400();
         }
-
+    
         $nombre = $data["nombre"];
         $apellido = $data["apellido"];
         $correoElectronico = $data["correoElectronico"];
         $contrasena = $data["contrasena"];
         $rol = $data["rol"];
-
+    
         // Encripta la contraseña
         $contrasenaEncriptada = parent::encript($contrasena);
-
-        // Realiza la inserción en la base de datos
-        $query = "INSERT INTO usuario (nombre, apellido, correoElectronico, contrasena, rol) VALUES ('$nombre', '$apellido', '$correoElectronico', '$contrasenaEncriptada', '$rol');";
-        $insertedUserId = parent::nonQueryId($query);
-
-        if ($insertedUserId > 0) {
-            $result = $_responses->response;
-            $result['result'] = array(
-                "message" => "Usuario registrado exitosamente",
-                "userId" => $insertedUserId
-            );
-            return $result;
-        } else {
-            return $_responses->error_500("Error interno del servidor, no hemos podido registrar el usuario");
+    
+        try {
+            // Realiza la inserción en la base de datos
+            $query = "INSERT INTO usuario (nombre, apellido, correoElectronico, contrasena, rol) VALUES ('$nombre', '$apellido', '$correoElectronico', '$contrasenaEncriptada', '$rol');";
+            $insertedUserId = parent::nonQueryId($query);
+    
+            if ($insertedUserId > 0) {
+                $result = $_responses->response;
+                $result['result'] = array(
+                    "message" => "Usuario registrado exitosamente",
+                    "userId" => $insertedUserId
+                );
+                return $result;
+            } else {
+                return $_responses->error_500("Error interno del servidor, no hemos podido registrar el usuario");
+            }
+        } catch (mysqli_sql_exception $e) {
+            // Aquí capturas la excepción de duplicación
+            if ($e->getCode() == 1062) {
+                return $_responses->error_400("El correo electrónico ya está registrado. Por favor, utiliza otro.");
+            } else {
+                return $_responses->error_500("Error interno del servidor: " . $e->getMessage());
+            }
         }
     }
+    
+    
 
     private function getUserData($email) {
         $query = "SELECT * FROM usuario WHERE correoElectronico = '$email';";

@@ -29,21 +29,28 @@
     </div>
 
     <div class="form-box signup">
-        <div class="form-details">
-
-        </div>
+        <div class="form-details"></div>
         <div class="form-content">
             <h2>Registrarse</h2>
-            <form action="#">
+            <form action="autenticacion.php" method="POST">
                 <div class="input-field">
-                    <input type="text" required>
+                    <input type="text" name="nombre" required>
+                    <label>Nombre</label>
+                </div>
+                <div class="input-field">
+                    <input type="text" name="apellido" required>
+                    <label>Apellido</label>
+                </div>
+                <div class="input-field">
+                    <input type="text" name="correoElectronico" required>
                     <label>Ingresa tu email</label>
                 </div>
                 <div class="input-field">
-                    <input type="password" required>
+                    <input type="password" name="contrasena" required>
                     <label>Ingresa tu clave</label>
                 </div>
                 <input type="hidden" name="action" value="register">
+                <input type="hidden" name="rol" value="usuario">
                 <button type="submit">Registrarse</button>
             </form>
             <div class="bottom-link">

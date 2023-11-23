@@ -37,8 +37,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             break;
         case 'register':
-            $dataArray = $_auth->registerUser($postBody);
+            $requestData = array(
+                'action' => $_POST['action'],
+                'nombre' => $_POST['nombre'],
+                'apellido' => $_POST['apellido'],
+                'correoElectronico' => $_POST['correoElectronico'],
+                'contrasena' => $_POST['contrasena'],
+                'rol' => $_POST['rol']
+                // Puedes agregar más variables aquí si es necesario
+            );
+            $jsonRequestData = json_encode($requestData);
+            $dataArray = $_auth->registerUser($jsonRequestData);
+
+            // Verificar si el registro fue exitoso
+            if ($dataArray['status'] === 'ok') {
+                // Redirigir a inicio.php con el mensaje como parámetro de URL
+                header('Location: index.php?mensaje=registro_exito');
+                exit();
+            } else {
+                // Verificar si hay un error relacionado con el correo electrónico duplicado
+                if ($dataArray['result']['error_id'] === '400') {
+                    // Mostrar la alerta directamente en el HTML
+                    echo '<script>alert("¡Error en el registro! El correo electrónico ya está registrado. Por favor, utiliza otro.");</script>';
+                    // Redirigir a la página de inicio o a donde desees
+                    echo '<script>window.location.href = "index.php";</script>';
+                    exit();
+                } else {
+                    // Mostrar una alerta de registro fallido por otros motivos
+                    echo '<script>alert("¡Error en el registro! Por favor, inténtalo de nuevo.");</script>';
+                }
+            }
             break;
+
         case 'logout':
             // Archivo para cerrar la sesión del usuario
             session_destroy();
