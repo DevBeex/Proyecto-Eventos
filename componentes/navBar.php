@@ -9,11 +9,11 @@
             <span class="close-btn material-symbols-rounded">close</span>
             <li><a href="#inicio">Inicio</a></li>
             <li><a href="#eventos">Eventos</a></li>
-            <li><a href="#">Mis eventos</a></li>
-            <li><a href="#">Apuntados</a></li>
+            <li><a href="#misEventos">Mis eventos</a></li>
+            <li><a href="#apuntados">Apuntados</a></li>
             <li><a href="#favoritos">Favoritos</a></li>
-            <li><a href="#">Mi perfil</a></li>
-            <li><a href="#">API</a></li>
+            <li><a href="#miPerfil">Mi perfil</a></li>
+            <li><a href="#api">API</a></li>
         </ul>
         <?php
         if (isset($_SESSION['usuario'])) {

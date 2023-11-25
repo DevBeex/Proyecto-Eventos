@@ -95,4 +95,59 @@ class Assistant extends conection
 
         return !empty($result);
     }
+
+    public function getUserEvents($userId)
+    {
+        $_responses = new responses;
+
+        // Validar que el usuario existe
+        if (!$this->userExists($userId)) {
+            return $_responses->error_400("El usuario no existe"); // Bad Request
+        }
+
+        // Obtener la lista de eventos a los que el usuario está apuntado
+        $query = "SELECT e.* FROM evento e
+        INNER JOIN asistente a ON e.idEvento = a.idEvento
+        WHERE a.idUsuarioAsistente = '$userId'";
+        $result = parent::getData($query);
+
+        // Éxito al obtener la lista de eventos del usuario
+        $response = $_responses->response;
+        $response["result"] = $result;
+        return $response;
+    }
+
+    public function removeEventParticipant($eventId, $userId)
+    {
+        $_responses = new responses;
+
+        // Validar que el evento existe
+        if (!$this->eventExists($eventId)) {
+            return $_responses->error_400("El evento no existe"); // Bad Request
+        }
+
+        // Validar que el usuario existe
+        if (!$this->userExists($userId)) {
+            return $_responses->error_400("El usuario no existe"); // Bad Request
+        }
+
+        // Verificar si el asistente está asignado al evento
+        if (!$this->isAssistantAssigned($eventId, $userId)) {
+            return $_responses->error_400("El asistente no está asignado a este evento");
+        }
+
+        // Eliminar al asistente del evento
+        $query = "DELETE FROM asistente WHERE idEvento = '$eventId' AND idUsuarioAsistente = '$userId'";
+        $result = parent::nonQuery($query);
+
+        if ($result) {
+            // Éxito al quitar al asistente del evento
+            $response = $_responses->response;
+            $response["result"] = array("message" => "Asistente quitado exitosamente del evento");
+            return $response;
+        } else {
+            // Error interno del servidor
+            return $_responses->error_500("Error al quitar al asistente del evento");
+        }
+    }
 }

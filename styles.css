@@ -136,7 +136,7 @@ header {
     position: fixed;
     top: 50%;
     left: 50%;
-    z-index: 10;
+    z-index: 1000; /* Ajusta este valor según sea necesario, debe ser mayor que cualquier otro z-index */
     width: 100%;
     opacity: 0;
     pointer-events: none;
@@ -151,6 +151,7 @@ header {
     pointer-events: auto;
     transform: translate(-50%, -50%);
     transition: transform 0.3s ease, opacity 0.1s;
+    z-index: 999;
 }
 
 .form-popup .close-btn {
@@ -270,11 +271,13 @@ form .input-field {
     text-decoration: underline;
 }
 
-form :where(.forgot-pass-link, .policy-text) {
+form .forgot-pass-link,
+form .policy-text {
     display: inline-flex;
     margin-top: 13px;
     font-size: 0.95rem;
 }
+
 
 form button {
     width: 100%;
@@ -549,13 +552,217 @@ form button:hover {
     border: 1px solid #8a0000;
     border-radius: 5px;
     color: #000000;
-    z-index: 999; /* Ajusta este valor según sea necesario para que aparezca sobre otros elementos */
-  }
-  
-  /* Opcional: Ajusta estilos para mejorar la apariencia */
-  .error-message p {
+}
+
+/* Opcional: Ajusta estilos para mejorar la apariencia */
+.error-message p {
     margin: 0;
     font-size: 18px;
     font-weight: bold;
-  }
-  
+}
+
+.styled-button {
+    background: #1AAB8A;
+    color: #fff;
+    border: none;
+    position: relative;
+    height: 40px; /* Ajusta la altura según tu preferencia */
+    font-size: 1.2em; /* Ajusta el tamaño de la fuente según tu preferencia */
+    padding: 0 1em; /* Ajusta el relleno según tu preferencia */
+    cursor: pointer;
+    transition: 800ms ease all;
+    outline: none;
+    margin-top: 10px; /* Ajusta el margen superior según tu preferencia */
+    
+}
+
+.styled-button:hover {
+    background: #fff;
+    color: #1AAB8A;
+}
+
+.styled-button:before,
+.styled-button:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 2px;
+    width: 0;
+    background: #1AAB8A;
+    transition: 400ms ease all;
+}
+
+.styled-button:after {
+    right: inherit;
+    top: inherit;
+    left: 0;
+    bottom: 0;
+}
+
+.styled-button:hover:before,
+.styled-button:hover:after {
+    width: 100%;
+    transition: 800ms ease all;
+}
+.create-event-button-container {
+    text-align: center; /* Centra el botón */
+    margin-top: 100px; /* Ajusta el margen superior según tu preferencia */
+    margin-right: 45%; /* Ajusta el margen izquierdo según tu preferencia */
+}
+
+/* Ajusta el z-index del modal de crear evento para que esté por debajo del modal de inicio de sesión */
+#createEventModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 100; /* Ajusta este valor según sea necesario, debe ser menor que el z-index del modal de inicio de sesión */
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    margin: 0;
+    max-width: 400px;
+}
+
+#createEventModal h2 {
+    text-align: center; /* Centra el título */
+    margin-bottom: 20px; /* Ajusta el margen inferior del título según tus preferencias */
+}
+
+/* Ajusta el z-index del overlay del modal de crear evento para que esté por debajo del modal de inicio de sesión */
+#createEventModal .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Fondo difuminado */
+    z-index: 100; /* Ajusta este valor según sea necesario, debe ser menor que el z-index del modal de inicio de sesión */
+}
+
+#createEventModal .modal-content {
+    color: #000;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#createEventModal .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+}
+
+.create-event-button-container {
+    text-align: center;
+    margin-top: 40px;
+    margin-right: 45%;
+    
+}
+
+.create-event-button-container .styled-button {
+    background: #1AAB8A;
+    color: #fff;
+    border: none;
+    position: relative;
+    height: 40px;
+    font-size: 1.2em;
+    padding: 0 1em;
+    cursor: pointer;
+    transition: 800ms ease all;
+    outline: none;
+    margin-top: 10px;
+}
+
+.create-event-button-container .styled-button:hover {
+    background: #fff;
+    color: #1AAB8A;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+}
+
+.form-row label {
+    width: 150px; /* Ajusta el ancho de las etiquetas según tus preferencias */
+    margin-right: 10px; /* Ajusta el margen derecho entre la etiqueta y el campo de entrada */
+}
+
+.form-row input,
+.form-row textarea,
+.form-row select {
+    width: 100%;
+    padding: 8px; /* Agrega un poco de espacio interno para suavizar los bordes */
+    border: 1px solid #ccc; /* Ajusta el grosor y color del borde según tus preferencias */
+    border-radius: 4px; /* Suaviza las esquinas de los bordes */
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total del elemento */
+}
+.form-row:first-child {
+    margin-top: 15px; /* Ajusta el margen superior del primer campo de entrada según tus preferencias */
+}
+
+/* Agrega estos estilos al final de tu archivo CSS */
+.drop-zone {
+    border: 2px dashed #aaa;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.drop-zone.drag-over {
+    background-color: #f0f0f0;
+}
+
+.drop-zone p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.drop-zone:hover {
+    border-color: #1AAB8A;
+}
+
+.loading-indicator {
+    display: none;
+    width: 30px;
+    height: 30px;
+    border: 4px solid #ccc;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.custom-file-input {
+    display: inline-block;
+    background-color: transparent; /* Fondo transparente */
+    color: #000; /* Color del texto (negro) */
+    padding: 6px 10px; /* Ajusta el espaciado interno para hacer el botón más pequeño */
+    font-size: 0.8em;
+    cursor: pointer;
+    border: 0.5px solid #555; /* Borde negro suave */
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s; /* Agregado efecto de transición al color del texto */
+}
+
+.custom-file-input:hover {
+    background-color: #e9f1f8; /* Cambia el color de fondo en hover a celeste suave */
+    color: #000; /* Cambia el color del texto en hover a negro */
+    border: 1px solid #333; /* Cambia el color del borde en hover a un negro un poco más oscuro */
+}

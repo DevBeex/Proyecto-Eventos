@@ -53,9 +53,13 @@ class event extends conection
         $data = json_decode($json, true);
 
         if (!isset($data['nombre']) || !isset($data['descripcion']) || !isset($data['fecha']) || !isset($data['hora']) || !isset($data['idUsuarioOrganizador']) || !isset($data['idLugar']) || !isset($data['imagenEvento'])) {
-            return $_responses->error_400(); // Bad Request
+            // Agregar un mensaje de depuración para identificar la clave faltante
+            $missingKey = array_filter(['nombre', 'descripcion', 'fecha', 'hora', 'idUsuarioOrganizador', 'idLugar', 'imagenEvento'], function($key) use ($data) {
+                return !isset($data[$key]);
+            });
+        
+            return $_responses->error_400("Falta la clave: " . implode(', ', $missingKey)); // Bad Request
         }
-
         // Recoger datos del formulario
         $nombre = $data['nombre'];
         $descripcion = $data['descripcion'];

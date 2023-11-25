@@ -6,11 +6,20 @@ $_event = new event;
 $_responses = new responses;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Recibir datos
-    $postBody = file_get_contents("php://input");
 
+    $requestData = array(
+        'nombre' => $_POST['nombre'],
+        'descripcion' => $_POST['descripcion'],
+        'hora' => $_POST['hora'],
+        'fecha' => $_POST['fecha'],
+        'idLugar' => $_POST['idLugar'],
+        'imagenEvento' => base64_encode(file_get_contents($_FILES['imagenEvento']['tmp_name'])),
+        'idUsuarioOrganizador' => $_POST['idUsuarioOrganizador']
+    );
+    $jsonRequestData = json_encode($requestData);
+    
     // Enviar los datos al método createEvent
-    $dataArray = $_event->createEvent($postBody);
+    $dataArray = $_event->createEvent($jsonRequestData);
 
     // Devolver respuestas
     header('Content-Type: application/json');
