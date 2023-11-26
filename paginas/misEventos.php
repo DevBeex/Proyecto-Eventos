@@ -30,94 +30,123 @@ if ($dataArray['status'] === 'ok') {
     // var_dump($eventos);
 ?>
 
-<!-- Contenedor del botón para ajustar la posición -->
-<div class="create-event-button-container">
-    <!-- Botón para abrir el modal de crear nuevo evento -->
-    <button id="openModalBtn" class="styled-button" onclick="openCreateEventModal()">Crear Evento</button>
-</div>
+    <!-- Contenedor del botón para ajustar la posición -->
+    <div class="create-event-button-container">
+        <!-- Botón para abrir el modal de crear nuevo evento -->
+        <button id="openModalBtn" class="styled-button" onclick="openCreateEventModal()">Crear Evento</button>
+    </div>
 
-<!-- Fondo difuminado -->
-<div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-overlay" id="modalOverlay"></div>
 
-<div id="createEventModal" class="modal-content">
-    <span class="close-btn" onclick="closeCreateEventModal()">&times;</span>
-    <h2>Crear Nuevo Evento</h2>
+    <div id="createEventModal" class="modal-content">
+        <span class="close-btn" onclick="closeCreateEventModal()">&times;</span>
+        <h2>Crear Nuevo Evento</h2>
 
-    <form id="createEventForm" action="evento.php" method="POST" enctype="multipart/form-data">
+        <form id="createEventForm" method="POST" enctype="multipart/form-data">
 
-        <div class="form-row">
-            <label for="nombre">Nombre del Evento:</label>
-            <input type="text" id="nombre" name="nombre" required>
-        </div>
-
-        <div class="form-row">
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
-        </div>
-
-        <div class="form-row">
-            <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha" name="fecha" required>
-        </div>
-
-        <div class="form-row">
-            <label for="hora">Hora:</label>
-            <input type="time" id="hora" name="hora" required>
-        </div>
-
-        <div class="form-row">
-            <label for="nombreLugar">Lugar:</label>
-            <!-- Cambiado a un datalist para mostrar sugerencias -->
-            <input list="suggestionList" id="nombreLugar" name="nombreLugar" oninput="searchPlace(this)" required>
-            <datalist id="suggestionList">
-                <!-- Aquí se agregarán las sugerencias -->
-            </datalist>
-            <input type="hidden" id="idLugar" name="idLugar" value=""> <!-- Campo oculto para el idLugar -->
-        </div>
-
-        <div>
-            <label for="imagenEvento">Imagen del evento:</label>
-            <div id="dropZone" class="drop-zone" ondragover="handleDragOver(event)" ondrop="handleFileDrop(event)">
-                <p>Arrastra y suelta la imagen aquí o haz clic para seleccionarla</p>
-                <label for="imagenEvento" class="custom-file-input">Seleccionar Archivo</label>
-                <input type="file" id="imagenEvento" name="imagenEvento" accept="image/*" required style="display: none;">
-                <div id="loadingIndicator" class="loading-indicator"></div>
-                <p id="fileName" style="color: green; font-weight: bold;"></p>
+            <div class="form-row">
+                <label for="nombre">Nombre del Evento:</label>
+                <input type="text" id="nombre" name="nombre" required>
             </div>
-        </div>
 
-        <input type="hidden" id="idUsuarioOrganizador" name="idUsuarioOrganizador" value="<?php echo $_SESSION['usuario']['idUsuario'] ?>">
+            <div class="form-row">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+            </div>
 
-        <button type="submit" class="styled-button">Crear Evento</button>
-    </form>
-</div>
+            <div class="form-row">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>
 
-<!-- Card list para mostrar eventos -->
+            <div class="form-row">
+                <label for="hora">Hora:</label>
+                <input type="time" id="hora" name="hora" required>
+            </div>
 
-<div class="card-list">
-    <?php foreach ($eventos['events'] as $evento) { ?>
-        <div class="card-item" data-id="<?php echo $evento['idEvento']; ?>">
-            <!-- Puedes ajustar el src de la imagen según la lógica de tu aplicación -->
-            <?php
-            $imagenEvento = isset($evento['imagenEvento']) ? str_replace('./', '', $evento['imagenEvento']) : 'images/default.jpg';
-            ?>
-            <img src="<?php echo $imagenEvento; ?>" alt="Card Image">
-            <span class="event-type"><?php echo isset($evento['nombre']) ? $evento['nombre'] : 'Nombre no disponible'; ?></span>
-            <h3><?php echo isset($evento['descripcion']) ? $evento['descripcion'] : 'Descripción no disponible'; ?></h3>
-            <!-- Resto de la información del evento... -->
+            <div class="form-row">
+                <label for="nombreLugar">Lugar:</label>
+                <!-- Cambiado a un datalist para mostrar sugerencias -->
+                <input list="suggestionList" id="nombreLugar" name="nombreLugar" oninput="searchPlace(this)" required>
+                <datalist id="suggestionList">
+                    <!-- Aquí se agregarán las sugerencias -->
+                </datalist>
+                <input type="hidden" id="idLugar" name="idLugar" value=""> <!-- Campo oculto para el idLugar -->
+            </div>
 
-            <!-- Icono para apuntarse al evento -->
-            <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'apuntarse', <?php echo $idUsuario; ?>)">
-                <i class="fa-solid fa-user-plus"></i>
-            </span>
+            <div>
+                <label for="imagenEvento">Imagen del evento (opcional):</label>
+                <div id="dropZone" class="drop-zone" ondragover="handleDragOver(event)" ondrop="handleFileDrop(event)">
+                    <p>Arrastra y suelta la imagen aquí o haz clic para seleccionarla</p>
+                    <label for="imagenEvento" class="custom-file-input">Seleccionar Archivo</label>
+                    <input type="file" id="imagenEvento" name="imagenEvento" accept="image/*" style="display: none;">
+                    <div id="loadingIndicator" class="loading-indicator"></div>
+                    <p id="fileName" style="color: green; font-weight: bold;"></p>
+                </div>
+            </div>
 
-            <!-- Icono para añadir a favoritos -->
-            <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'favoritos', <?php echo $idUsuario; ?>)">
-                <i class="fas fa-star card-icon"></i>
-            </span>
-        </div>
-    <?php } ?>
-</div>
+            <input type="hidden" id="idUsuarioOrganizador" name="idUsuarioOrganizador" value="<?php echo $_SESSION['usuario']['idUsuario'] ?>">
+
+            <button type="button" onclick="submitEventForm()" class="styled-button">Crear Evento</button>
+        </form>
+    </div>
+
+    <!-- Card list para mostrar eventos -->
+
+    <div class="card-list">
+        <?php foreach ($eventos['events'] as $evento) { ?>
+            <div class="card-item" data-id="<?php echo $evento['idEvento']; ?>">
+                <!-- Puedes ajustar el src de la imagen según la lógica de tu aplicación -->
+                <?php
+                $imagenEvento = isset($evento['imagenEvento']) ? str_replace('./', '', $evento['imagenEvento']) : 'images/default.jpg';
+                ?>
+                <img src="<?php echo $imagenEvento; ?>" alt="Card Image">
+                <span class="event-type"><?php echo isset($evento['nombre']) ? $evento['nombre'] : 'Nombre no disponible'; ?></span>
+                <h3><?php echo isset($evento['descripcion']) ? $evento['descripcion'] : 'Descripción no disponible'; ?></h3>
+                <!-- Resto de la información del evento... -->
+                    <p>Fecha: <?= $evento['fecha']; ?></p>
+                    <p>Hora: <?= $evento['hora']; ?></p>
+                    <?php
+                    // Obtener el nombre del organizador
+                    $idOrganizador = $evento['idUsuarioOrganizador'];
+                    $queryOrganizador = "SELECT nombre, apellido FROM usuario WHERE idUsuario = '$idOrganizador'";
+                    $resultOrganizador = $_event->getData($queryOrganizador);
+
+                    if ($resultOrganizador && count($resultOrganizador) > 0) :
+                        $organizador = $resultOrganizador[0];
+                    ?>
+                        <p>Organizador: <?= "{$organizador['nombre']} {$organizador['apellido']}"; ?></p>
+                    <?php else : ?>
+                        <p>Organizador no encontrado</p>
+                    <?php endif; ?>
+
+                    <?php
+                    // Obtener la información del lugar
+                    $idLugar = $evento['idLugar'];
+                    $queryLugar = "SELECT nombreLugar, ciudad, estado, pais FROM lugar WHERE idLugar = '$idLugar'";
+                    $resultLugar = $_event->getData($queryLugar);
+
+                    if ($resultLugar && count($resultLugar) > 0) :
+                        $lugar = $resultLugar[0];
+                    ?>
+                        <p>Lugar: <?= "{$lugar['nombreLugar']}, {$lugar['ciudad']}, {$lugar['estado']}, {$lugar['pais']}"; ?></p>
+                    <?php else : ?>
+                        <p>Lugar no encontrado</p>
+                    <?php endif; ?>
+                <!-- Icono para apuntarse al evento -->
+                <!-- Icono para editar el evento -->
+                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'editar', <?php echo $idUsuario; ?>)">
+                    <i class="fas fa-edit card-icon"></i>
+                </span>
+
+                <!-- Icono para eliminar el evento -->
+                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'eliminar', <?php echo $idUsuario; ?>)">
+                    <i class="fas fa-trash-alt card-icon"></i>
+                </span>
+
+            </div>
+        <?php } ?>
+    </div>
 
 
 <?php
@@ -128,36 +157,39 @@ if ($dataArray['status'] === 'ok') {
 ?>
 
 <style>
-  /* Estilos para el contenedor del botón */
-  .create-event-button-container {
-    margin-top: 125px; /* Ajusta la distancia desde la parte superior */
-  }
+    /* Estilos para el contenedor del botón */
+    .create-event-button-container {
+        margin-top: 125px;
+        /* Ajusta la distancia desde la parte superior */
+    }
 
-  /* Estilos para la lista de tarjetas */
-  .card-list {
-    margin-top: 10px; /* Ajusta la distancia desde la parte superior */
-  }
+    /* Estilos para la lista de tarjetas */
+    .card-list {
+        margin-top: 10px;
+        /* Ajusta la distancia desde la parte superior */
+    }
 
-  /* Estilos para el fondo difuminado */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Ajusta la opacidad según tus preferencias */
-    z-index: 1;
-  }
+    /* Estilos para el fondo difuminado */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        /* Ajusta la opacidad según tus preferencias */
+        z-index: 1;
+    }
 
-  /* Ajusta la posición y tamaño del modal según sea necesario */
-  #createEventModal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    /* Otros estilos para el modal... */
-  }
+    /* Ajusta la posición y tamaño del modal según sea necesario */
+    #createEventModal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        /* Otros estilos para el modal... */
+    }
 </style>

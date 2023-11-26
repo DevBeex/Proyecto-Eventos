@@ -7,13 +7,16 @@ const hidePopupBtn = formPopup.querySelector(".close-btn");
 const signupLoginLink = formPopup.querySelectorAll(".bottom-link a");
 const contentContainer = document.getElementById("content-container");
 var openModalBtn = document.getElementById('openModalBtn');
-
+let overlay;
 
 function showMessage(message, iconClass, messageType) {
     // Crear overlay
-    const overlay = document.createElement('div');
-    overlay.classList.add('modal-overlay');
-    document.body.appendChild(overlay);
+
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.classList.add('modal-overlay');
+        document.body.appendChild(overlay);
+    }
 
     // Establecer el color de fondo según el tipo de mensaje
     const modalColorClass = messageType === 'success' ? 'modal-success' : 'modal-error';
@@ -34,7 +37,7 @@ function showMessage(message, iconClass, messageType) {
 
     // Mostrar overlay y modal
     overlay.style.display = 'block';
-    const modal = document.querySelector('.modal');
+    const modal = document.querySelector('.modal-success'); // Asegúrate de usar la clase correcta
     modal.style.display = 'block';
 
     // Estilos adicionales para centrar y ajustar el tamaño del icono
@@ -221,6 +224,12 @@ function handleEventAction(eventId, action, userId) {
             quitarDeFavoritos(eventId, userId);
         } else if (action === 'quitarApuntados') {
             quitarApuntado(eventId, userId);
+        } else if (action == 'editar') {
+            // Abre el modal de crear evento con los detalles del evento para editar
+            openCreateEventModal();
+            loadEventDetails(eventId);
+        } else if (action == 'eliminar') {
+
         }
     } else {
         // El usuario no ha iniciado sesión, mostrar un modal o realizar acciones adicionales
@@ -258,19 +267,15 @@ function showLoginModal() {
 }
 
 function closeModal() {
-    // Ocultar el fondo y el modal
-    const overlay = document.querySelector('.modal-overlay');
-    const modal = document.querySelector('.modal');
+    // Oculta el fondo y el modal
+    const modal = document.querySelector('.modal-success'); // Asegúrate de usar la clase correcta
 
     if (overlay && modal) {
         overlay.style.display = 'none';
         modal.style.display = 'none';
-
-        // Eliminar el fondo difuminado y el modal del DOM
-        overlay.remove();
-        modal.remove();
     }
 }
+
 
 function apuntarseAlEvento(idEvento, userId) {
     // Realizar la petición AJAX para apuntarse al evento
@@ -507,5 +512,40 @@ async function searchPlace(input) {
     } else {
         // Limpiar el valor del campo oculto si la longitud de entrada no es suficiente
         hiddenInput.value = "";
+    }
+}
+
+function submitEventForm() {
+    // Obtener los datos del formulario
+    const formData = new FormData(document.getElementById('createEventForm'));
+
+    // Hacer la solicitud AJAX
+    fetch('evento.php', {
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => response.json())
+        .then(data => handleEventCreation(data))
+        .catch(error => console.error('Error al crear el evento:', error));
+}
+
+function handleEventCreation(response) {
+    // Analizar la respuesta JSON
+    try {
+        const redirectUrl = response.redirect_url;
+
+        if (redirectUrl) {
+            // Cambiar la vista utilizando loadPage
+            loadPage(redirectUrl);
+
+            // Mostrar mensaje de éxito
+            showMessage('Evento creado con éxito', 'fas fa-check-circle', 'success');
+
+        }
+    } catch (error) {
+        console.error("Error al analizar la respuesta JSON: ", error);
+
+        // Mostrar mensaje de error
+        showMessage('Error al crear el evento', 'fas fa-exclamation-circle', 'error');
     }
 }
