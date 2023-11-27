@@ -84,7 +84,9 @@ if ($dataArray['status'] === 'ok') {
                     <p id="fileName" style="color: green; font-weight: bold;"></p>
                 </div>
             </div>
+            <div id="previewContainer"></div>
 
+            <input type="hidden" id="modoEvento" name="modoEvento" value="">
             <input type="hidden" id="idUsuarioOrganizador" name="idUsuarioOrganizador" value="<?php echo $_SESSION['usuario']['idUsuario'] ?>">
 
             <button type="button" onclick="submitEventForm()" class="styled-button">Crear Evento</button>
@@ -99,48 +101,52 @@ if ($dataArray['status'] === 'ok') {
                 <!-- Puedes ajustar el src de la imagen según la lógica de tu aplicación -->
                 <?php
                 $imagenEvento = isset($evento['imagenEvento']) ? str_replace('./', '', $evento['imagenEvento']) : 'images/default.jpg';
+                $evento['imagenEvento'] = $imagenEvento;
                 ?>
                 <img src="<?php echo $imagenEvento; ?>" alt="Card Image">
                 <span class="event-type"><?php echo isset($evento['nombre']) ? $evento['nombre'] : 'Nombre no disponible'; ?></span>
                 <h3><?php echo isset($evento['descripcion']) ? $evento['descripcion'] : 'Descripción no disponible'; ?></h3>
                 <!-- Resto de la información del evento... -->
-                    <p>Fecha: <?= $evento['fecha']; ?></p>
-                    <p>Hora: <?= $evento['hora']; ?></p>
-                    <?php
-                    // Obtener el nombre del organizador
-                    $idOrganizador = $evento['idUsuarioOrganizador'];
-                    $queryOrganizador = "SELECT nombre, apellido FROM usuario WHERE idUsuario = '$idOrganizador'";
-                    $resultOrganizador = $_event->getData($queryOrganizador);
+                <p>Fecha: <?= $evento['fecha']; ?></p>
+                <p>Hora: <?= $evento['hora']; ?></p>
+                <?php
+                // Obtener el nombre del organizador
+                $idOrganizador = $evento['idUsuarioOrganizador'];
+                $queryOrganizador = "SELECT nombre, apellido FROM usuario WHERE idUsuario = '$idOrganizador'";
+                $resultOrganizador = $_event->getData($queryOrganizador);
 
-                    if ($resultOrganizador && count($resultOrganizador) > 0) :
-                        $organizador = $resultOrganizador[0];
-                    ?>
-                        <p>Organizador: <?= "{$organizador['nombre']} {$organizador['apellido']}"; ?></p>
-                    <?php else : ?>
-                        <p>Organizador no encontrado</p>
-                    <?php endif; ?>
+                if ($resultOrganizador && count($resultOrganizador) > 0) :
+                    $organizador = $resultOrganizador[0];
+                ?>
+                    <p>Organizador: <?= "{$organizador['nombre']} {$organizador['apellido']}"; ?></p>
+                <?php else : ?>
+                    <p>Organizador no encontrado</p>
+                <?php endif; ?>
 
-                    <?php
-                    // Obtener la información del lugar
-                    $idLugar = $evento['idLugar'];
-                    $queryLugar = "SELECT nombreLugar, ciudad, estado, pais FROM lugar WHERE idLugar = '$idLugar'";
-                    $resultLugar = $_event->getData($queryLugar);
+                <?php
+                // Obtener la información del lugar
+                $idLugar = $evento['idLugar'];
+                $queryLugar = "SELECT nombreLugar, ciudad, estado, pais FROM lugar WHERE idLugar = '$idLugar'";
+                $resultLugar = $_event->getData($queryLugar);
 
-                    if ($resultLugar && count($resultLugar) > 0) :
-                        $lugar = $resultLugar[0];
-                    ?>
-                        <p>Lugar: <?= "{$lugar['nombreLugar']}, {$lugar['ciudad']}, {$lugar['estado']}, {$lugar['pais']}"; ?></p>
-                    <?php else : ?>
-                        <p>Lugar no encontrado</p>
-                    <?php endif; ?>
-                <!-- Icono para apuntarse al evento -->
-                <!-- Icono para editar el evento -->
-                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'editar', <?php echo $idUsuario; ?>)">
+                if ($resultLugar && count($resultLugar) > 0) :
+                    $lugar = $resultLugar[0];
+                ?>
+                    <p>Lugar: <?= "{$lugar['nombreLugar']}, {$lugar['ciudad']}, {$lugar['estado']}, {$lugar['pais']}"; ?></p>
+                <?php else : ?>
+                    <p>Lugar no encontrado</p>
+                <?php endif; ?>
+
+                <input type="hidden" id="idEvento" name="idEvento" value="<?php echo $evento['idEvento'] ?>">
+
+                <span class="icon-container" onclick="openCreateEventModal(<?php echo htmlspecialchars(json_encode($evento), ENT_QUOTES, 'UTF-8'); ?>)">
                     <i class="fas fa-edit card-icon"></i>
                 </span>
 
+
+
                 <!-- Icono para eliminar el evento -->
-                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento']; ?>, 'eliminar', <?php echo $idUsuario; ?>)">
+                <span class="icon-container" onclick="handleEventAction()">
                     <i class="fas fa-trash-alt card-icon"></i>
                 </span>
 

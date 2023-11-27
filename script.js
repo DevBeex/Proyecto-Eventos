@@ -224,12 +224,6 @@ function handleEventAction(eventId, action, userId) {
             quitarDeFavoritos(eventId, userId);
         } else if (action === 'quitarApuntados') {
             quitarApuntado(eventId, userId);
-        } else if (action == 'editar') {
-            // Abre el modal de crear evento con los detalles del evento para editar
-            openCreateEventModal();
-            loadEventDetails(eventId);
-        } else if (action == 'eliminar') {
-
         }
     } else {
         // El usuario no ha iniciado sesión, mostrar un modal o realizar acciones adicionales
@@ -366,19 +360,76 @@ function quitarApuntado(idEvento, userId) {
     }
 }
 
-function openCreateEventModal() {
+function openCreateEventModal(evento) {
+    console.log('hola', evento);
     // Obtén el modal por su ID
-    document.getElementById('createEventModal').style.display = 'block';
-    document.getElementById('modalOverlay').style.display = 'block';
     var createEventModal = document.getElementById('createEventModal');
+    document.getElementById('modalOverlay').style.display = 'block';
+
     // Asocia las funciones con los eventos específicos del modal
     document.getElementById('imagenEvento').addEventListener('change', handleFileSelection);
     document.getElementById('dropZone').addEventListener('dragover', handleDragOver);
     document.getElementById('dropZone').addEventListener('drop', handleFileDrop);
 
+    // Limpia los campos y la vista previa si es un nuevo evento
+    if (!evento) {
+        clearForm();
+    }
+
     if (createEventModal) {
         // Muestra el modal estableciendo su estilo de visualización en 'block'
         createEventModal.style.display = 'block';
+        // Ajusta la posición vertical del modal
+        createEventModal.style.marginTop = '60px'; // Ajusta la cantidad de píxeles según tus necesidades
+
+        // Verifica si se proporciona un evento para editar
+        if (evento) {
+            var h2Element = document.getElementById('createEventModal').querySelector('h2');
+            h2Element.textContent = 'Editar Evento: ' + evento.nombre;
+            // Preenchir el formulario con los datos del evento
+            document.getElementById('nombre').value = evento.nombre;
+            document.getElementById('descripcion').value = evento.descripcion;
+            document.getElementById('fecha').value = evento.fecha;
+            document.getElementById('hora').value = evento.hora;
+            document.getElementById('nombreLugar').value = evento.nombreLugar;
+            document.getElementById('idLugar').value = evento.idLugar;
+            document.getElementById('idUsuarioOrganizador').value = evento.idUsuarioOrganizador;
+
+            // Establecer el modo como 'editar' en el campo oculto
+            document.getElementById('modoEvento').value = 'editar';
+
+            // Crear la etiqueta img y mostrar la imagen anterior
+            var imagenEventoPreview = document.createElement('img');
+            imagenEventoPreview.id = 'imagenEventoPreview';
+            imagenEventoPreview.src = evento.imagenEvento;
+            imagenEventoPreview.alt = 'Imagen del evento';
+
+            // Estilos para limitar el tamaño del preview y centrarlo
+            imagenEventoPreview.style.maxWidth = '25%';
+            imagenEventoPreview.style.height = 'auto';
+            imagenEventoPreview.style.display = 'block'; // Hacer que la imagen sea un bloque para centrarla
+            imagenEventoPreview.style.margin = 'auto'; // Centrar horizontalmente
+
+            // Insertar la etiqueta img en el documento
+            var previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = ''; // Limpiar cualquier contenido previo
+            previewContainer.appendChild(imagenEventoPreview);
+
+            // Agregar un mensaje de "Imagen actual"
+            var mensajeImagenActual = document.createElement('p');
+            mensajeImagenActual.textContent = 'Imagen actual - Haz clic aqui o en seleccionar archivo para cargar una nueva';
+            mensajeImagenActual.style.textAlign = 'center'; // Centrar el texto
+            previewContainer.appendChild(mensajeImagenActual);
+
+            // Simular clic en el campo input al hacer clic en la imagen
+            imagenEventoPreview.addEventListener('click', function () {
+                document.getElementById('imagenEvento').click();
+            });
+
+        } else {
+            // Establecer el modo como 'crear' en el campo oculto
+            document.getElementById('modoEvento').value = 'crear';
+        }
 
         // Agregar un evento 'DOMContentLoaded' específico para el modal
         createEventModal.addEventListener('DOMContentLoaded', function () {
@@ -394,7 +445,29 @@ function openCreateEventModal() {
             });
         });
     }
+
+    function clearForm() {
+        // Limpiar los campos del formulario
+        document.getElementById('nombre').value = '';
+        document.getElementById('descripcion').value = '';
+        document.getElementById('fecha').value = '';
+        document.getElementById('hora').value = '';
+        document.getElementById('nombreLugar').value = '';
+        document.getElementById('idLugar').value = '';
+        document.getElementById('idUsuarioOrganizador').value = '';
+        document.getElementById('imagenEvento').value = '';
+
+        // Limpiar la vista previa de la imagen
+        var previewContainer = document.getElementById('previewContainer');
+        previewContainer.innerHTML = '';
+        // Restablecer el texto del h2 a su valor predeterminado
+        var h2Element = document.getElementById('createEventModal').querySelector('h2');
+        h2Element.textContent = 'Crear Nuevo Evento';
+    }
 }
+
+
+
 function closeCreateEventModal() {
     // Obtén el modal por su ID
     document.getElementById('createEventModal').style.display = 'none';
@@ -516,18 +589,50 @@ async function searchPlace(input) {
 }
 
 function submitEventForm() {
+    // Obtener el valor del campo oculto idEvento
+    var eventId = document.getElementById('idEvento').value;
+
+    // Obtener el valor del campo oculto modoEvento
+    var modoEvento = document.getElementById('modoEvento').value;
+
     // Obtener los datos del formulario
     const formData = new FormData(document.getElementById('createEventForm'));
 
-    // Hacer la solicitud AJAX
-    fetch('evento.php', {
-        method: 'POST',
-        body: formData,
-    })
-        .then(response => response.json())
-        .then(data => handleEventCreation(data))
-        .catch(error => console.error('Error al crear el evento:', error));
+    // Crear una estructura de datos para enviar en la solicitud
+    const requestData = {};
+    formData.forEach((value, key) => {
+        requestData[key] = value;
+    });
+
+    // Verificar el modo (crear o editar)
+    if (modoEvento === 'editar') {
+        // Realizar la lógica para enviar la actualización al backend
+        fetch(`evento.php?idEvento=${eventId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        })
+            .then(response => response.json())
+            .then(data => handleEventCreation(data))
+            .catch(error => console.error('Error al actualizar el evento:', error));
+    } else {
+        // Realizar la lógica para enviar la creación al backend
+        fetch('evento.php', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => handleEventCreation(data))
+            .catch(error => console.error('Error al crear el evento:', error));
+    }
+
+    // Cerrar el modal después de enviar el formulario
+    closeCreateEventModal();
 }
+
+
 
 function handleEventCreation(response) {
     // Analizar la respuesta JSON
