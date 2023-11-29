@@ -220,11 +220,53 @@ function handleEventAction(eventId, action, userId) {
             quitarDeFavoritos(eventId, userId);
         } else if (action === 'quitarApuntados') {
             quitarApuntado(eventId, userId);
+        }else if (action === 'eliminarEvento') {
+            eliminarEvento(eventId);
         }
     } else {
         // El usuario no ha iniciado sesión, mostrar un modal o realizar acciones adicionales
         showLoginModal();
     }
+}
+
+function eliminarEvento(eventId){
+    // Realizar la petición AJAX para quitar el evento de favoritos
+    const xhr = new XMLHttpRequest();
+    xhr.open("DELETE", "evento.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    const data = {
+        idEvento: eventId
+    };
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // La petición fue exitosa
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.status === 'ok') {
+                    // La operación fue exitosa, mostrar un mensaje de éxito
+                    console.log('Operación exitosa:', response.result.message);
+                    // Puedes realizar acciones adicionales aquí, como actualizar la interfaz de usuario
+                    showMessage(response.result.message, 'fas fa-check-circle', 'success');
+
+                    // Cargar nuevamente el contenido del tab de "Favoritos"
+                    loadPage('misEventos');
+                } else if (response.status === 'error'){
+                    // La operación falló, mostrar un mensaje de error
+                    console.log('Error en la operación:', response.result.error_msg);
+                    showMessage(response.result.error_msg, 'fas fa-exclamation-circle', 'error');
+                }
+            } else {
+                // La petición falló, puedes mostrar un mensaje de error
+                console.log('Error en la petición:', xhr.status, xhr.statusText);
+                showMessage('Error en la petición', 'fas fa-exclamation-circle', 'error');
+            }
+        }
+    };
+
+    xhr.send(JSON.stringify(data));
 }
 
 function showLoginModal() {
@@ -236,7 +278,7 @@ function showLoginModal() {
     // Crear el modal y su contenido
     const modalContent = `
         <div class="modal">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <span class="close-btn" id="closeLoginModalBtn">&times;</span>
             <div class="modal-content">
                 <p>Debes iniciar sesión para apuntarte a eventos o añadir a favoritos.</p>
             </div>
@@ -254,7 +296,23 @@ function showLoginModal() {
     overlay.addEventListener('click', function (event) {
         event.stopPropagation();
     });
+
+    // Asignar el evento onclick directamente
+    const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
+    closeLoginModalBtn.addEventListener('click', function () {
+        // Ocultar overlay y todos los modales
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+
+        // Buscar y eliminar todos los modales existentes
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.parentNode.removeChild(modal);
+        });
+    });
 }
+
 
 function closeModal() {
     // Ocultar overlay y todos los modales

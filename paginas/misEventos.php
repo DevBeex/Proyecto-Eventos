@@ -141,14 +141,13 @@ if ($dataArray['status'] === 'ok') {
 
                 <input type="hidden" id="idEvento" name="idEvento" value="<?php echo $evento['idEvento'] ?>">
 
+                <!-- Icono para editar el evento -->
                 <span class="icon-container" onclick="openCreateEventModal(<?php echo htmlspecialchars(json_encode($evento), ENT_QUOTES, 'UTF-8'); ?>)">
                     <i class="fas fa-edit card-icon"></i>
                 </span>
 
-
-
                 <!-- Icono para eliminar el evento -->
-                <span class="icon-container" onclick="handleEventAction()">
+                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento'] ?>, 'eliminarEvento', <?php echo $_SESSION['usuario']['idUsuario'] ?>)">
                     <i class="fas fa-trash-alt card-icon"></i>
                 </span>
 
