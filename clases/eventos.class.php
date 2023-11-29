@@ -54,10 +54,10 @@ class event extends conection
 
         if (!isset($data['nombre']) || !isset($data['descripcion']) || !isset($data['fecha']) || !isset($data['hora']) || !isset($data['idUsuarioOrganizador']) || !isset($data['idLugar']) || !isset($data['imagenEvento'])) {
             // Agregar un mensaje de depuración para identificar la clave faltante
-            $missingKey = array_filter(['nombre', 'descripcion', 'fecha', 'hora', 'idUsuarioOrganizador', 'idLugar', 'imagenEvento'], function($key) use ($data) {
+            $missingKey = array_filter(['nombre', 'descripcion', 'fecha', 'hora', 'idUsuarioOrganizador', 'idLugar', 'imagenEvento'], function ($key) use ($data) {
                 return !isset($data[$key]);
             });
-        
+
             return $_responses->error_400("Falta la clave: " . implode(', ', $missingKey)); // Bad Request
         }
         // Recoger datos del formulario
@@ -93,7 +93,8 @@ class event extends conection
                 $mensaje = $_responses->response;
                 $mensaje['result'] = array(
                     "message" => "Evento [$nombre] registrado exitosamente",
-                    "organizador" => "id del organizador: [$idUsuarioOrganizador]"
+                    "organizador" => "id del organizador: [$idUsuarioOrganizador]",
+                    "redirect_url" => "misEventos"
                 );
                 return $mensaje;
             } else {
@@ -114,7 +115,7 @@ class event extends conection
         // Verificar si todos los campos necesarios están presentes
         $requiredFields = ['nombre', 'descripcion', 'fecha', 'hora', 'idLugar'];
         if (!$this->validateFields($data, $requiredFields)) {
-            return $_responses->error_400(); // Bad Request
+            return $_responses->error_400("faltan campos"); // Bad Request
         }
 
         // Recoger datos del formulario
@@ -133,43 +134,72 @@ class event extends conection
         // Obtener la ruta actual de la imagen en la base de datos
         $rutaImagenAnterior = $this->getImagePath($eventId);
 
-        // Actualizar la imagen solo si se proporciona una nueva
-        if ($imagenEvento) {
-            // Nombre único para la imagen
-            $nombreImagen = uniqid() . '_' . $nombre . '.' . $this->getImageExtension($imagenEvento);
+        // Línea de depuración para verificar los datos recibidos
+        error_log("Datos recibidos para el evento con ID $eventId: " . json_encode($data));
 
-            // Ruta completa del archivo en el servidor
-            $rutaCompleta = $rutaDestino . $nombreImagen;
+        // Verificar si se proporcionó una nueva imagen
+        if ($imagenEvento !== null) {
+            // Línea de depuración para verificar la nueva imagen
+            error_log("Nueva imagen proporcionada para el evento con ID $eventId: $imagenEvento");
 
-            // Guardar la nueva imagen en el servidor
-            if ($this->saveImageToServer($imagenEvento, $rutaCompleta)) {
-                // Actualizar la base de datos con la nueva ruta de la imagen
-                $query = "UPDATE evento SET nombre = '$nombre', descripcion = '$descripcion', fecha = '$fecha', hora = '$hora', idLugar = '$idLugar', imagenEvento = '$rutaCompleta' WHERE idEvento = '$eventId'";
-                // Eliminar la imagen anterior si la actualización es exitosa
-                if (file_exists($rutaImagenAnterior)) {
-                    unlink($rutaImagenAnterior);
+            // Si la imagen es diferente, procesarla
+            if ($rutaImagenAnterior !== $imagenEvento) {
+                // Línea de depuración para verificar que la imagen anterior es diferente
+                error_log("La imagen anterior ($rutaImagenAnterior) es diferente de la nueva imagen ($imagenEvento)");
+
+                // Nombre único para la nueva imagen
+                $nombreImagen = uniqid() . '_' . $nombre . '.' . $this->getImageExtension($imagenEvento);
+
+                // Ruta completa del archivo en el servidor
+                $rutaCompleta = $rutaDestino . $nombreImagen;
+
+                // Línea de depuración para verificar la ruta completa de la nueva imagen
+                error_log("Ruta completa de la nueva imagen: $rutaCompleta");
+
+                // Guardar la nueva imagen en el servidor
+                if ($this->saveImageToServer($imagenEvento, $rutaCompleta)) {
+                    // Eliminar la imagen anterior si la actualización es exitosa
+                    if (file_exists($rutaImagenAnterior)) {
+                        unlink($rutaImagenAnterior);
+                    }
+                } else {
+                    return $_responses->error_500("Error al guardar la nueva imagen en el servidor"); // Internal Server Error
                 }
-            } else {
-                return $_responses->error_500("Error al guardar la nueva imagen en el servidor"); // Internal Server Error
             }
+
+            // Actualizar la base de datos con la nueva ruta de la imagen
+            $query = "UPDATE evento SET nombre = '$nombre', descripcion = '$descripcion', fecha = '$fecha', hora = '$hora', idLugar = '$idLugar', imagenEvento = '$rutaCompleta' WHERE idEvento = '$eventId'";
         } else {
+            // Línea de depuración para indicar que no se proporcionó una nueva imagen
+            error_log("No se proporcionó una nueva imagen para el evento con ID $eventId");
+
             // No se proporcionó una nueva imagen, solo actualizar otros campos
             $query = "UPDATE evento SET nombre = '$nombre', descripcion = '$descripcion', fecha = '$fecha', hora = '$hora', idLugar = '$idLugar' WHERE idEvento = '$eventId'";
         }
 
-        // Realizar la actualización en la base de datos
-        $result = parent::nonQuery($query);
+        // Línea de depuración para verificar la consulta SQL
+        error_log("Consulta SQL generada: $query");
 
-        if ($result) {
-            // Éxito al editar el evento
+        // Ejecutar la consulta
+        $result = parent::nonQuery($query);
+        error_log("imprimiendo result: " . $result);
+
+        if ($result !== false) {
+            // La consulta se ejecutó sin errores, independientemente de si se realizaron cambios
             $response = $_responses->response;
-            $response["result"] = array("message" => "Evento $nombre editado exitosamente");
+            $response["result"] = array(
+                "message" => "Evento $nombre editado exitosamente",
+                "redirect_url" => "misEventos"
+            );
+
             return $response;
         } else {
             // Error interno del servidor
-            return $_responses->error_500();
+            return $_responses->error_500("Error al editar el evento");
         }
     }
+
+
 
     public function deleteEvent($eventId)
     {

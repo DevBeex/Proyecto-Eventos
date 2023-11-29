@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header('Content-Type: application/json');
     if (isset($dataArray["result"]["error_id"])) {
         $responseCode = $dataArray["result"]["error_id"];
-        http_response_code($responseCode);
+        http_response_code(200);
     } else {
         http_response_code(200);
     }
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header('Content-Type: application/json');
     if (isset($dataArray["result"]["error_id"])) {
         $responseCode = $dataArray["result"]["error_id"];
-        http_response_code($responseCode);
+        http_response_code(200);
     } else {
         http_response_code(200);
     }

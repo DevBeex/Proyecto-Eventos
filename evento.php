@@ -7,13 +7,26 @@ $_responses = new responses;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    // Verifica si se ha cargado una imagen
-    if (isset($_FILES['imagenEvento']['tmp_name']) && !empty($_FILES['imagenEvento']['tmp_name'])) {
-        // Si hay una imagen cargada, conviértela a base64
-        $imagenEvento = base64_encode(file_get_contents($_FILES['imagenEvento']['tmp_name']));
-    } else {
-        // Si no hay imagen cargada, utiliza la imagen predeterminada en base64
-        $imagenEvento = base64_encode(file_get_contents('images/default.jpg'));
+    $eventId = $_POST['idEvento'];
+    $modoEvento = $_POST['modoEvento'];
+
+    if ($modoEvento == 'crear'){
+        // Verifica si se ha cargado una imagen
+        if (isset($_FILES['imagenEvento']['tmp_name']) && !empty($_FILES['imagenEvento']['tmp_name'])) {
+            // Si hay una imagen cargada, conviértela a base64
+            $imagenEvento = base64_encode(file_get_contents($_FILES['imagenEvento']['tmp_name']));
+        } else {
+            // Si no hay imagen cargada, utiliza la imagen predeterminada en base64
+            $imagenEvento = base64_encode(file_get_contents('images/default.jpg'));
+        }
+    }else if ($modoEvento == 'editar'){
+        if (isset($_FILES['imagenEvento']['tmp_name']) && !empty($_FILES['imagenEvento']['tmp_name'])) {
+            // Si hay una imagen cargada, conviértela a base64
+            $imagenEvento = base64_encode(file_get_contents($_FILES['imagenEvento']['tmp_name']));
+        } else {
+            // Si no hay imagen cargada, utiliza la imagen predeterminada en base64
+            $imagenEvento = null;
+        }
     }
 
     $requestData = array(
@@ -25,49 +38,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'imagenEvento' => $imagenEvento,
         'idUsuarioOrganizador' => $_POST['idUsuarioOrganizador']
     );
+
     $jsonRequestData = json_encode($requestData);
 
-    // Enviar los datos al método createEvent
-    $dataArray = $_event->createEvent($jsonRequestData);
+    // Validar el modo del evento (crear o editar)
+    $modoEvento = isset($_POST['modoEvento']) ? $_POST['modoEvento'] : '';
+
+    if ($modoEvento === 'editar') {
+        // Enviar los datos al método editEvent
+        $dataArray = $_event->editEvent($eventId, $jsonRequestData);
+    } elseif ($modoEvento === 'crear') {
+        // Enviar los datos al método createEvent
+        $dataArray = $_event->createEvent($jsonRequestData);
+    } else {
+        // Manejar un caso no válido
+        $dataArray = array("result" => array("error_id" => "modo_invalido"));
+    }
 
     // Devolver respuestas
     header('Content-Type: application/json');
 
     if (isset($dataArray["result"]["error_id"])) {
         $responseCode = $dataArray["result"]["error_id"];
-        http_response_code($responseCode);
+        http_response_code(200);
         echo json_encode($dataArray);
     } else {
-        // Devolver la URL de redirección
-        $redirectUrl = "misEventos";
-        echo json_encode(["redirect_url" => $redirectUrl]);
+        // Éxito al crear o editar el evento
+        echo json_encode($dataArray["result"]);
     }
-} elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-
-    // Código para manejar solicitudes PUT
-    // Recibir datos
-    $putData = file_get_contents("php://input");
-    $data = json_decode($putData, true);
-
-    // Verificar si idEvento está presente en los datos decodificados
-    if (isset($data['idEvento'])) {
-        $eventId = $data['idEvento'];
-    } else {
-        echo "idEvento no está presente en los datos decodificados.";
-    }
-
-    // Enviar los datos al método editEvent
-    $dataArray = $_event->editEvent($eventId, $putData);
-
-    // Devolver respuestas
-    header('Content-Type: application/json');
-    if (isset($dataArray["result"]["error_id"])) {
-        $responseCode = $dataArray["result"]["error_id"];
-        http_response_code($responseCode);
-    } else {
-        http_response_code(200);
-    }
-    echo json_encode($dataArray);
 } elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
     // Obtener idEvento de la URL
     $postBody = file_get_contents("php://input");

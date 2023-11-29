@@ -11,19 +11,19 @@ let overlay;
 
 function showMessage(message, iconClass, messageType) {
     // Crear overlay
-
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.classList.add('modal-overlay');
         document.body.appendChild(overlay);
     }
 
-    // Establecer el color de fondo según el tipo de mensaje
+    // Establecer el color de fondo y la clase según el tipo de mensaje
+    const modalBackgroundColor = messageType === 'success' ? '#4CAF50' : '#f44336';
     const modalColorClass = messageType === 'success' ? 'modal-success' : 'modal-error';
 
     // Crear modal con contenido dinámico
     const modalContent = `
-        <div class="modal ${modalColorClass}">
+        <div class="modal ${modalColorClass}" style="background-color: ${modalBackgroundColor};">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div class="modal-content">
                 <i class="${iconClass}"></i>
@@ -37,7 +37,7 @@ function showMessage(message, iconClass, messageType) {
 
     // Mostrar overlay y modal
     overlay.style.display = 'block';
-    const modal = document.querySelector('.modal-success'); // Asegúrate de usar la clase correcta
+    const modal = document.querySelector(`.modal.${modalColorClass}`);
     modal.style.display = 'block';
 
     // Estilos adicionales para centrar y ajustar el tamaño del icono
@@ -56,6 +56,7 @@ function showMessage(message, iconClass, messageType) {
         event.stopPropagation();
     });
 }
+
 
 // Show mobile menu
 hamburgerBtn.addEventListener("click", () => {
@@ -118,11 +119,6 @@ window.addEventListener("scroll", function () {
     console.log(navbar.classList.contains("scroll")); // Agrega este console.log para verificar
 });
 
-// Función para manejar la lógica de apuntarse al evento
-function apuntarseAlEvento(idEvento) {
-    // Aquí puedes realizar las acciones necesarias
-    console.log(`Apuntándote al evento ${idEvento}`);
-}
 
 // Función para manejar la lógica de añadir a favoritos
 function añadirAFavoritos(idEvento, userId) {
@@ -261,14 +257,16 @@ function showLoginModal() {
 }
 
 function closeModal() {
-    // Oculta el fondo y el modal
-    const modal = document.querySelector('.modal-success'); // Asegúrate de usar la clase correcta
+    // Ocultar overlay y todos los modales
+    overlay.style.display = 'none';
 
-    if (overlay && modal) {
-        overlay.style.display = 'none';
-        modal.style.display = 'none';
-    }
+    // Buscar y eliminar todos los modales existentes
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.parentNode.removeChild(modal);
+    });
 }
+
 
 
 function apuntarseAlEvento(idEvento, userId) {
@@ -293,15 +291,15 @@ function apuntarseAlEvento(idEvento, userId) {
                     // La operación fue exitosa, mostrar un mensaje de éxito
                     console.log('Operación exitosa:', response.result.message);
                     showMessage(response.result.message, 'fas fa-check-circle', 'success');
-                } else {
-                    // La operación falló, mostrar un mensaje de error
+                } else if (response.status === 'error') {
+                    // La operación falló, mostrar un mensaje de error específico
                     console.log('Error en la operación:', response.result.error_msg);
                     showMessage(response.result.error_msg, 'fas fa-exclamation-circle', 'error');
                 }
             } else {
-                // La petición falló, puedes mostrar un mensaje de error
+                // La petición falló, mostrar un mensaje de error genérico
                 console.log('Error en la petición:', xhr.status, xhr.statusText);
-                showMessage('Ya esta apuntado a este evento', 'fas fa-exclamation-circle', 'error');
+                showMessage('Ya estas apuntado al evento', 'fas fa-exclamation-circle', 'error');
             }
         }
     };
@@ -309,7 +307,7 @@ function apuntarseAlEvento(idEvento, userId) {
     xhr.send(JSON.stringify(data));
 }
 
-// Nueva función para manejar la lógica de quitar apuntado
+
 function quitarApuntado(idEvento, userId) {
     // Verificar si el usuario ha iniciado sesión
     if (userId) {
@@ -325,10 +323,11 @@ function quitarApuntado(idEvento, userId) {
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
+                // Independientemente del código de estado, parsear la respuesta JSON
+                const response = JSON.parse(xhr.responseText);
+
                 if (xhr.status === 200) {
                     // La petición fue exitosa
-                    const response = JSON.parse(xhr.responseText);
-
                     if (response.status === 'ok') {
                         // La operación fue exitosa, mostrar un mensaje de éxito
                         console.log('Operación exitosa:', response.result.message);
@@ -338,15 +337,15 @@ function quitarApuntado(idEvento, userId) {
                         // Puedes realizar acciones adicionales aquí, como actualizar la interfaz de usuario
                         // Por ejemplo, cargar nuevamente el contenido del tab de "Mis Eventos"
                         loadPage('apuntados');
-                    } else {
-                        // La operación falló, mostrar un mensaje de error
+                    } else if (response.status === 'error') {
+                        // La operación falló, mostrar un mensaje de error específico
                         console.log('Error en la operación:', response.result.error_msg);
                         showMessage(response.result.error_msg, 'fas fa-exclamation-circle', 'error');
                     }
                 } else {
-                    // La petición falló, puedes mostrar un mensaje de error
+                    // La petición falló, mostrar un mensaje de error genérico
                     console.log('Error en la petición:', xhr.status, xhr.statusText);
-                    showMessage('Error en la petición', 'fas fa-exclamation-circle', 'error');
+                    showMessage(response.result.error_msg || 'Error en la petición', 'fas fa-exclamation-circle', 'error');
                 }
             }
         };
@@ -359,6 +358,7 @@ function quitarApuntado(idEvento, userId) {
         showLoginModal();
     }
 }
+
 
 function openCreateEventModal(evento) {
     console.log('hola', evento);
@@ -387,6 +387,12 @@ function openCreateEventModal(evento) {
             var h2Element = document.getElementById('createEventModal').querySelector('h2');
             h2Element.textContent = 'Editar Evento: ' + evento.nombre;
             // Preenchir el formulario con los datos del evento
+            var datalist = document.getElementById("suggestionList");
+            datalist.innerHTML = "";
+            var option = document.createElement("option");
+            option.value = evento.nombreLugar;
+            option.textContent = evento.nombreLugar;
+            document.getElementById('botonCreateOrUpdate').innerHTML = "Editar Evento";
             document.getElementById('nombre').value = evento.nombre;
             document.getElementById('descripcion').value = evento.descripcion;
             document.getElementById('fecha').value = evento.fecha;
@@ -394,6 +400,7 @@ function openCreateEventModal(evento) {
             document.getElementById('nombreLugar').value = evento.nombreLugar;
             document.getElementById('idLugar').value = evento.idLugar;
             document.getElementById('idUsuarioOrganizador').value = evento.idUsuarioOrganizador;
+            document.getElementById('idEvento').value = evento.idEvento;
 
             // Establecer el modo como 'editar' en el campo oculto
             document.getElementById('modoEvento').value = 'editar';
@@ -447,19 +454,16 @@ function openCreateEventModal(evento) {
     }
 
     function clearForm() {
+        // Obtener el formulario
+        var form = document.getElementById('createEventForm');
+
         // Limpiar los campos del formulario
-        document.getElementById('nombre').value = '';
-        document.getElementById('descripcion').value = '';
-        document.getElementById('fecha').value = '';
-        document.getElementById('hora').value = '';
-        document.getElementById('nombreLugar').value = '';
-        document.getElementById('idLugar').value = '';
-        document.getElementById('idUsuarioOrganizador').value = '';
-        document.getElementById('imagenEvento').value = '';
+        form.reset();
 
         // Limpiar la vista previa de la imagen
         var previewContainer = document.getElementById('previewContainer');
         previewContainer.innerHTML = '';
+
         // Restablecer el texto del h2 a su valor predeterminado
         var h2Element = document.getElementById('createEventModal').querySelector('h2');
         h2Element.textContent = 'Crear Nuevo Evento';
@@ -589,49 +593,56 @@ async function searchPlace(input) {
 }
 
 function submitEventForm() {
-    // Obtener el valor del campo oculto idEvento
     var eventId = document.getElementById('idEvento').value;
-
-    // Obtener el valor del campo oculto modoEvento
+    var modoEvento = document.getElementById('modoEvento').value;
+    var nombreEvento = document.getElementById('nombre').value;
+    var descripcionEvento = document.getElementById('descripcion').value;
+    var fechaEvento = document.getElementById('fecha').value;
+    var horaEvento = document.getElementById('hora').value;
+    var idLugarEvento = document.getElementById('idLugar').value;
+    var imagenEventoInput = document.getElementById('imagenEvento');
+    var idUsuarioOrganizador = document.getElementById('idUsuarioOrganizador').value;
     var modoEvento = document.getElementById('modoEvento').value;
 
-    // Obtener los datos del formulario
-    const formData = new FormData(document.getElementById('createEventForm'));
+    // Asegúrate de obtener la imagen correctamente si es necesaria
+    var imagenEvento = imagenEventoInput.files.length > 0 ? imagenEventoInput.files[0] : null;
 
-    // Crear una estructura de datos para enviar en la solicitud
-    const requestData = {};
-    formData.forEach((value, key) => {
-        requestData[key] = value;
-    });
+    // Obtener el valor del campo oculto idEvento
+    var idEvento = document.getElementById('idEvento').value;
 
-    // Verificar el modo (crear o editar)
-    if (modoEvento === 'editar') {
-        // Realizar la lógica para enviar la actualización al backend
-        fetch(`evento.php?idEvento=${eventId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData),
-        })
-            .then(response => response.json())
-            .then(data => handleEventCreation(data))
-            .catch(error => console.error('Error al actualizar el evento:', error));
-    } else {
-        // Realizar la lógica para enviar la creación al backend
-        fetch('evento.php', {
-            method: 'POST',
-            body: formData,
-        })
-            .then(response => response.json())
-            .then(data => handleEventCreation(data))
-            .catch(error => console.error('Error al crear el evento:', error));
+    // Crea un objeto FormData
+    const formData = new FormData();
+
+    // Agrega los campos al FormData solo si hay una imagen
+    if (imagenEvento) {
+        formData.append('imagenEvento', imagenEvento);
     }
 
-    // Cerrar el modal después de enviar el formulario
-    closeCreateEventModal();
-}
+    // Agrega los demás campos al FormData
+    formData.append('idEvento', idEvento);
+    formData.append('nombre', nombreEvento);
+    formData.append('descripcion', descripcionEvento);
+    formData.append('fecha', fechaEvento);
+    formData.append('hora', horaEvento);
+    formData.append('idLugar', idLugarEvento);
+    formData.append('idUsuarioOrganizador', idUsuarioOrganizador);
+    formData.append('modoEvento', modoEvento);
 
+
+    // Determina la URL y el método en función del modoEvento
+    const url = modoEvento === 'editar' ? `evento.php?idEvento=${eventId}` : 'evento.php';
+    const method = modoEvento === 'editar' ? 'POST' : 'POST';
+
+    // Realiza la solicitud fetch
+    fetch(url, {
+        method: method,
+        body: formData,
+    })
+        .then(response => response.json())
+        .then(data => handleEventCreation(data))
+        .catch(error => console.error('Error al procesar el evento:', error))
+        .finally(() => closeCreateEventModal());
+}
 
 
 function handleEventCreation(response) {
@@ -643,14 +654,14 @@ function handleEventCreation(response) {
             // Cambiar la vista utilizando loadPage
             loadPage(redirectUrl);
 
-            // Mostrar mensaje de éxito
-            showMessage('Evento creado con éxito', 'fas fa-check-circle', 'success');
-
+            // Mostrar mensaje de éxito con el mensaje de response
+            showMessage(response.message || 'Evento creado con éxito', 'fas fa-check-circle', 'success');
         }
     } catch (error) {
         console.error("Error al analizar la respuesta JSON: ", error);
 
-        // Mostrar mensaje de error
-        showMessage('Error al crear el evento', 'fas fa-exclamation-circle', 'error');
+        // Mostrar mensaje de error con el mensaje de response
+        showMessage(response.message || 'Error al crear el evento', 'fas fa-exclamation-circle', 'error');
     }
 }
+

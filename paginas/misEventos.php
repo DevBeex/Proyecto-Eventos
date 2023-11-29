@@ -87,9 +87,10 @@ if ($dataArray['status'] === 'ok') {
             <div id="previewContainer"></div>
 
             <input type="hidden" id="modoEvento" name="modoEvento" value="">
+            <input type="hidden" id="idEvento" name="idEvento" value="">
             <input type="hidden" id="idUsuarioOrganizador" name="idUsuarioOrganizador" value="<?php echo $_SESSION['usuario']['idUsuario'] ?>">
 
-            <button type="button" onclick="submitEventForm()" class="styled-button">Crear Evento</button>
+            <button id="botonCreateOrUpdate" type="button" onclick="submitEventForm()" class="styled-button">Crear Evento</button>
         </form>
     </div>
 
@@ -131,6 +132,7 @@ if ($dataArray['status'] === 'ok') {
 
                 if ($resultLugar && count($resultLugar) > 0) :
                     $lugar = $resultLugar[0];
+                    $evento['nombreLugar'] = $lugar['nombreLugar'];
                 ?>
                     <p>Lugar: <?= "{$lugar['nombreLugar']}, {$lugar['ciudad']}, {$lugar['estado']}, {$lugar['pais']}"; ?></p>
                 <?php else : ?>
@@ -157,8 +159,76 @@ if ($dataArray['status'] === 'ok') {
 
 <?php
 } else {
+
+    ?><!-- Contenedor del botón para ajustar la posición -->
+    <div class="create-event-button-container">
+        <!-- Botón para abrir el modal de crear nuevo evento -->
+        <button id="openModalBtn" class="styled-button" onclick="openCreateEventModal()">Crear Evento</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <div id="createEventModal" class="modal-content">
+        <span class="close-btn" onclick="closeCreateEventModal()">&times;</span>
+        <h2>Crear Nuevo Evento</h2>
+
+        <form id="createEventForm" method="POST" enctype="multipart/form-data">
+
+            <div class="form-row">
+                <label for="nombre">Nombre del Evento:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+
+            <div class="form-row">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+            </div>
+
+            <div class="form-row">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>
+
+            <div class="form-row">
+                <label for="hora">Hora:</label>
+                <input type="time" id="hora" name="hora" required>
+            </div>
+
+            <div class="form-row">
+                <label for="nombreLugar">Lugar:</label>
+                <!-- Cambiado a un datalist para mostrar sugerencias -->
+                <input list="suggestionList" id="nombreLugar" name="nombreLugar" oninput="searchPlace(this)" required>
+                <datalist id="suggestionList">
+                    <!-- Aquí se agregarán las sugerencias -->
+                    <option value="">hola</option>
+                </datalist>
+                <input type="hidden" id="idLugar" name="idLugar" value=""> <!-- Campo oculto para el idLugar -->
+            </div>
+
+            <div>
+                <label for="imagenEvento">Imagen del evento (opcional):</label>
+                <div id="dropZone" class="drop-zone" ondragover="handleDragOver(event)" ondrop="handleFileDrop(event)">
+                    <p>Arrastra y suelta la imagen aquí o haz clic para seleccionarla</p>
+                    <label for="imagenEvento" class="custom-file-input">Seleccionar Archivo</label>
+                    <input type="file" id="imagenEvento" name="imagenEvento" accept="image/*" style="display: none;">
+                    <div id="loadingIndicator" class="loading-indicator"></div>
+                    <p id="fileName" style="color: green; font-weight: bold;"></p>
+                </div>
+            </div>
+            <div id="previewContainer"></div>
+
+            <input type="hidden" id="modoEvento" name="modoEvento" value="">
+            <input type="hidden" id="idEvento" name="idEvento" value="">
+            <input type="hidden" id="idUsuarioOrganizador" name="idUsuarioOrganizador" value="<?php echo $_SESSION['usuario']['idUsuario'] ?>">
+
+            <button id="botonCreateOrUpdate" type="button" onclick="submitEventForm()" class="styled-button">Crear Evento</button>
+        </form>
+    </div>
+
+    <?php
+    
     // Mostrar un mensaje estilizado en caso de error al obtener eventos
-    echo "<div class='error-message'>Error al obtener eventos.</div>";
+    echo "<div class='error-message'>No hay eventos creados por usted</div>";
 }
 ?>
 

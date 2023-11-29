@@ -76,6 +76,6 @@ if ($dataArray['status'] === 'ok') {
     }
 } else {
     // Mostrar un mensaje estilizado en caso de error al obtener eventos
-    echo "<div class='error-message'>Error al obtener eventos.</div>";
+    echo "<div class='error-message'>No hay eventos creados</div>";
 }
 ?>
