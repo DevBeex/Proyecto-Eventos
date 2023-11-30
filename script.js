@@ -64,6 +64,7 @@ hamburgerBtn.addEventListener("click", () => {
 });
 
 
+
 // Hide mobile menu
 hideMenuBtn.addEventListener("click", () => hamburgerBtn.click());
 
@@ -723,3 +724,76 @@ function handleEventCreation(response) {
     }
 }
 
+function editarUsuario() {
+ 
+    // Obtener los valores de los campos
+    var nombre = document.getElementById('nombre').value;
+    var apellido = document.getElementById('apellido').value;
+    var correoElectronico = document.getElementById('correoElectronico').value;
+    var contrasena = document.getElementById('contrasena').value;
+    var action = document.getElementById('action').value;
+    var idUsuario = document.getElementById('idUsuario').value;
+
+    // Crear un objeto FormData
+    const formData = new FormData();
+
+    // Agregar los campos al FormData
+    formData.append('nombre', nombre);
+    formData.append('apellido', apellido);
+    formData.append('correoElectronico', correoElectronico);
+    formData.append('contrasena', contrasena);
+    formData.append('action', action);
+    formData.append('idUsuario', idUsuario);
+
+    // Realizar la solicitud fetch
+    fetch('autenticacion.php', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Independientemente del código de estado, puedes manejar la respuesta JSON
+        if (data.status === 'ok') {
+            // La operación fue exitosa, mostrar un mensaje de éxito
+            console.log('Operación exitosa:', data.result.message);
+            // Puedes realizar acciones adicionales aquí, como actualizar la interfaz de usuario
+            // Por ejemplo, mostrar un mensaje de éxito en la interfaz
+            alert('Usuario editado con éxito');
+            loadPage('miPerfil')
+        } else if (data.status === 'error') {
+            // La operación falló, mostrar un mensaje de error específico
+            console.log('Error en la operación:', data.result.error_msg);
+            // Puedes realizar acciones adicionales aquí, como mostrar un mensaje de error en la interfaz
+            alert('Error al editar usuario: ' + data.result.error_msg);
+            loadPage('miPerfil')
+        }
+    })
+    .catch(error => {
+        // La petición falló, mostrar un mensaje de error genérico
+        console.error('Error en la petición:', error);
+        // Puedes realizar acciones adicionales aquí, como mostrar un mensaje de error en la interfaz
+        alert('Error en la petición al editar usuario2');
+    });
+}
+
+function validarEdicionUsuario() {
+    var nombre = document.getElementById('nombre').value;
+    var apellido = document.getElementById('apellido').value;
+    var correoElectronico = document.getElementById('correoElectronico').value;
+    var contrasena = document.getElementById('contrasena').value;
+
+    // Validar que el correo electrónico tenga el formato correcto
+    var emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+    if (!emailRegex.test(correoElectronico)) {
+        alert('Por favor, ingresa un correo electrónico válido.');
+        return false;
+    }
+
+    // Puedes agregar más validaciones según tus necesidades
+
+    // Si todas las validaciones pasan, llamar a editarUsuario()
+    editarUsuario();
+
+    // Devolver false para evitar que el formulario se envíe automáticamente
+    return false;
+}

@@ -107,6 +107,53 @@ class Auth extends conection
         }
     }
 
+    public function editUser($json)
+    {
+        $_responses = new Responses;
+        $data = json_decode($json, true);
+
+        // Verifica que los datos necesarios estén presentes
+        if (
+            !isset($data["idUsuario"]) ||
+            !isset($data["nombre"]) ||
+            !isset($data["apellido"]) ||
+            !isset($data["correoElectronico"]) ||
+            !isset($data["contrasena"])
+        ) {
+            return $_responses->error_400();
+        }
+
+        $idUsuario = $data["idUsuario"];
+        $nombre = $data["nombre"];
+        $apellido = $data["apellido"];
+        $correoElectronico = $data["correoElectronico"];
+        $contrasena = $data["contrasena"];
+
+        // Encripta la contraseña
+        $contrasenaEncriptada = parent::encript($contrasena);
+
+        // Actualiza los datos en la base de datos
+        $query = "UPDATE usuario SET nombre = '$nombre', apellido = '$apellido', correoElectronico = '$correoElectronico', contrasena = '$contrasenaEncriptada' WHERE idUsuario = '$idUsuario';";
+        $updatedRows = parent::nonQuery($query);
+
+        if ($updatedRows > 0) {
+            $userData = $this->getUserData($correoElectronico);
+            $_SESSION['usuario']['idUsuario'] = $userData[0]['idUsuario'];
+            $_SESSION['usuario']['nombre'] = $userData[0]['nombre'];
+            $_SESSION['usuario']['apellido'] = $userData[0]['apellido'];
+            $_SESSION['usuario']['correoElectronico'] = $userData[0]['correoElectronico'];
+
+            $result = $_responses->response;
+            $result['result'] = array(
+                "message" => "Usuario '$correoElectronico' actualizado exitosamente"
+            );
+            return $result;
+        } else {
+            return $_responses->error_500("Error interno del servidor, no hemos podido actualizar el usuario puede ser por el correo");
+        }
+    }
+
+
 
 
     private function getUserData($email)

@@ -88,6 +88,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
             break;
 
+        case 'editUser':
+            $requestData = array(
+                'action' => $_POST['action'],
+                'idUsuario' => $_POST['idUsuario'],
+                'nombre' => $_POST['nombre'],
+                'apellido' => $_POST['apellido'],
+                'correoElectronico' => $_POST['correoElectronico'],
+                'contrasena' => $_POST['contrasena']
+            );
+            $jsonRequestData = json_encode($requestData);
+            $dataArray = $_auth->editUser($jsonRequestData);
+            break;
+
         default:
             $dataArray = $_responses->error_400(); // Bad Request
             break;
@@ -99,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($dataArray["result"]["error_id"])) {
         $responseCode = $dataArray["result"]["error_id"];
-        http_response_code($responseCode);
+        http_response_code(200);
     } else {
         http_response_code(200);
     }
