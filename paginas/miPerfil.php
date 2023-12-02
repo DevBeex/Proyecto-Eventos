@@ -1,7 +1,11 @@
 <?php
 session_start();
+
+if (isset($_SESSION['usuario'])) {
+    // Aquí va el código para mostrar el formulario de edición del perfil
 ?>
-<div class="form-container">
+    <div class="form-container">
+    <div class="form-container">
     <form class="edit-user-form" method="post" enctype="multipart/form-data" onsubmit="return validarEdicionUsuario()">
         <h2>Editar datos de cuenta</h2>
 
@@ -22,3 +26,14 @@ session_start();
         <button type="submit">Guardar cambios</button>
     </form>
 </div>
+    </div>
+<?php
+} else {
+    // Si el usuario no ha iniciado sesión, mostrar un mensaje
+?>
+    <div class="error-message">
+        <p>Debes iniciar sesión para editar tu perfil.</p>
+    </div>
+<?php
+}
+?>

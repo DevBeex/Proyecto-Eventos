@@ -12,6 +12,7 @@ body {
     margin: 0; /* Elimina el margin predeterminado del body */
     padding: 0; /* Elimina el padding predeterminado del body */
     background: url("./images/hero-bg.jpg") center/cover no-repeat;
+    
 }
 
 body::before {
@@ -55,6 +56,12 @@ header {
     max-width: 1200px;
     margin: 0 auto;
     justify-content: space-between;
+    transition: height 0.3s ease;
+    
+}
+
+.navbar.editing {
+    transition: height 0.3s ease;
 }
 
 .navbar.scroll {
@@ -608,7 +615,7 @@ form button:hover {
 }
 .create-event-button-container {
     text-align: center; /* Centra el botón */
-    margin-top: 100px; /* Ajusta el margen superior según tu preferencia */
+    margin-top: 300px; /* Ajusta el margen superior según tu preferencia */
     margin-right: 45%; /* Ajusta el margen izquierdo según tu preferencia */
 }
 

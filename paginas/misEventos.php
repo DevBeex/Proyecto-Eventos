@@ -4,11 +4,11 @@ session_start();
 // Verificar si el usuario está registrado
 if (!isset($_SESSION['usuario']) || empty($_SESSION['usuario'])) {
     // Si no está registrado, mostrar mensaje y salir del script
-?>
+    ?>
     <div class="error-message">
         <p>Debes iniciar sesión para ver tus eventos y crear nuevos.</p>
     </div>
-<?php
+    <?php
     exit();
 }
 
@@ -28,7 +28,7 @@ if ($dataArray['status'] === 'ok') {
     // Obtener el array de eventos desde el resultado
     $eventos = $dataArray['result'];
     // var_dump($eventos);
-?>
+    ?>
 
     <!-- Contenedor del botón para ajustar la posición -->
     <div class="create-event-button-container">
@@ -66,13 +66,26 @@ if ($dataArray['status'] === 'ok') {
 
             <div class="form-row">
                 <label for="nombreLugar">Lugar:</label>
-                <!-- Cambiado a un datalist para mostrar sugerencias -->
-                <input list="suggestionList" id="nombreLugar" name="nombreLugar" oninput="searchPlace(this)" required>
-                <datalist id="suggestionList">
-                    <!-- Aquí se agregarán las sugerencias -->
-                </datalist>
-                <input type="hidden" id="idLugar" name="idLugar" value=""> <!-- Campo oculto para el idLugar -->
+                <select id="idLugar" name="idLugar">
+                    <option value="">Selecciona un lugar</option>
+                    <?php
+                    // Obtener la lista de lugares desde la base de datos
+                    $queryLugares = "SELECT idLugar, nombreLugar, direccion FROM lugar";
+                    $resultLugares = $_event->getData($queryLugares);
+
+                    // Verificar si la consulta fue exitosa
+                    if ($resultLugares) {
+                        foreach ($resultLugares as $lugar) {
+                            echo "<option value='{$lugar['idLugar']}' data-direccion='{$lugar['direccion']}'>{$lugar['nombreLugar']} {$lugar['direccion']}</option>";
+                        }
+                    } else {
+                        // Manejar el caso en que no se pudieron obtener los lugares
+                        echo "<option value=''>Error al cargar la lista de lugares.</option>";
+                    }
+                    ?>
+                </select>
             </div>
+
 
             <div>
                 <label for="imagenEvento">Imagen del evento (opcional):</label>
@@ -88,9 +101,11 @@ if ($dataArray['status'] === 'ok') {
 
             <input type="hidden" id="modoEvento" name="modoEvento" value="">
             <input type="hidden" id="idEvento" name="idEvento" value="">
-            <input type="hidden" id="idUsuarioOrganizador" name="idUsuarioOrganizador" value="<?php echo $_SESSION['usuario']['idUsuario'] ?>">
+            <input type="hidden" id="idUsuarioOrganizador" name="idUsuarioOrganizador"
+                value="<?php echo $_SESSION['usuario']['idUsuario'] ?>">
 
-            <button id="botonCreateOrUpdate" type="button" onclick="submitEventForm()" class="styled-button">Crear Evento</button>
+            <button id="botonCreateOrUpdate" type="button" onclick="submitEventForm()" class="styled-button">Crear
+                Evento</button>
         </form>
     </div>
 
@@ -105,49 +120,63 @@ if ($dataArray['status'] === 'ok') {
                 $evento['imagenEvento'] = $imagenEvento;
                 ?>
                 <img src="<?php echo $imagenEvento; ?>" alt="Card Image">
-                <span class="event-type"><?php echo isset($evento['nombre']) ? $evento['nombre'] : 'Nombre no disponible'; ?></span>
-                <h3><?php echo isset($evento['descripcion']) ? $evento['descripcion'] : 'Descripción no disponible'; ?></h3>
+                <span class="event-type">
+                    <?php echo isset($evento['nombre']) ? $evento['nombre'] : 'Nombre no disponible'; ?>
+                </span>
+                <h3>
+                    <?php echo isset($evento['descripcion']) ? $evento['descripcion'] : 'Descripción no disponible'; ?>
+                </h3>
                 <!-- Resto de la información del evento... -->
-                <p>Fecha: <?= $evento['fecha']; ?></p>
-                <p>Hora: <?= $evento['hora']; ?></p>
+                <p>Fecha:
+                    <?= $evento['fecha']; ?>
+                </p>
+                <p>Hora:
+                    <?= $evento['hora']; ?>
+                </p>
                 <?php
                 // Obtener el nombre del organizador
                 $idOrganizador = $evento['idUsuarioOrganizador'];
                 $queryOrganizador = "SELECT nombre, apellido FROM usuario WHERE idUsuario = '$idOrganizador'";
                 $resultOrganizador = $_event->getData($queryOrganizador);
 
-                if ($resultOrganizador && count($resultOrganizador) > 0) :
+                if ($resultOrganizador && count($resultOrganizador) > 0):
                     $organizador = $resultOrganizador[0];
-                ?>
-                    <p>Organizador: <?= "{$organizador['nombre']} {$organizador['apellido']}"; ?></p>
-                <?php else : ?>
+                    ?>
+                    <p>Organizador:
+                        <?= "{$organizador['nombre']} {$organizador['apellido']}"; ?>
+                    </p>
+                <?php else: ?>
                     <p>Organizador no encontrado</p>
                 <?php endif; ?>
 
                 <?php
                 // Obtener la información del lugar
                 $idLugar = $evento['idLugar'];
-                $queryLugar = "SELECT nombreLugar, ciudad, estado, pais FROM lugar WHERE idLugar = '$idLugar'";
+                $queryLugar = "SELECT nombreLugar, direccion FROM lugar WHERE idLugar = '$idLugar'";
                 $resultLugar = $_event->getData($queryLugar);
 
-                if ($resultLugar && count($resultLugar) > 0) :
+                if ($resultLugar && count($resultLugar) > 0):
                     $lugar = $resultLugar[0];
                     $evento['nombreLugar'] = $lugar['nombreLugar'];
-                ?>
-                    <p>Lugar: <?= "{$lugar['nombreLugar']}, {$lugar['ciudad']}, {$lugar['estado']}, {$lugar['pais']}"; ?></p>
-                <?php else : ?>
+                    ?>
+                    <p>Lugar:
+                        <?= "{$lugar['nombreLugar']}, {$lugar['direccion']}"; ?>
+                    </p>
+                <?php else: ?>
                     <p>Lugar no encontrado</p>
                 <?php endif; ?>
 
                 <input type="hidden" id="idEvento" name="idEvento" value="<?php echo $evento['idEvento'] ?>">
 
                 <!-- Icono para editar el evento -->
-                <span class="icon-container" onclick="openCreateEventModal(<?php echo htmlspecialchars(json_encode($evento), ENT_QUOTES, 'UTF-8'); ?>)">
+                <span class="icon-container"
+                    onclick="openCreateEventModal(<?php echo htmlspecialchars(json_encode($evento), ENT_QUOTES, 'UTF-8'); ?>)">
                     <i class="fas fa-edit card-icon"></i>
                 </span>
 
                 <!-- Icono para eliminar el evento -->
-                <span class="icon-container" onclick="handleEventAction(<?php echo $evento['idEvento'] ?>, 'eliminarEvento', <?php echo $_SESSION['usuario']['idUsuario'] ?>)">
+                <span class="icon-container"
+                    onclick="handleEventAction(<?php echo $evento['idEvento'] ?>, 'eliminarEvento', <?php echo $_SESSION['usuario']['idUsuario'] ?>)">
                     <i class="fas fa-trash-alt card-icon"></i>
                 </span>
 
@@ -156,7 +185,7 @@ if ($dataArray['status'] === 'ok') {
     </div>
 
 
-<?php
+    <?php
 } else {
 
     ?><!-- Contenedor del botón para ajustar la posición -->
@@ -195,14 +224,26 @@ if ($dataArray['status'] === 'ok') {
 
             <div class="form-row">
                 <label for="nombreLugar">Lugar:</label>
-                <!-- Cambiado a un datalist para mostrar sugerencias -->
-                <input list="suggestionList" id="nombreLugar" name="nombreLugar" oninput="searchPlace(this)" required>
-                <datalist id="suggestionList">
-                    <!-- Aquí se agregarán las sugerencias -->
-                    <option value="">hola</option>
-                </datalist>
-                <input type="hidden" id="idLugar" name="idLugar" value=""> <!-- Campo oculto para el idLugar -->
+                <select id="idLugar" name="idLugar">
+                    <option value="">Selecciona un lugar</option>
+                    <?php
+                    // Obtener la lista de lugares desde la base de datos
+                    $queryLugares = "SELECT idLugar, nombreLugar, direccion FROM lugar";
+                    $resultLugares = $_event->getData($queryLugares);
+
+                    // Verificar si la consulta fue exitosa
+                    if ($resultLugares) {
+                        foreach ($resultLugares as $lugar) {
+                            echo "<option value='{$lugar['idLugar']}' data-direccion='{$lugar['direccion']}'>{$lugar['nombreLugar']} {$lugar['direccion']}</option>";
+                        }
+                    } else {
+                        // Manejar el caso en que no se pudieron obtener los lugares
+                        echo "<option value=''>Error al cargar la lista de lugares.</option>";
+                    }
+                    ?>
+                </select>
             </div>
+
 
             <div>
                 <label for="imagenEvento">Imagen del evento (opcional):</label>
@@ -218,14 +259,16 @@ if ($dataArray['status'] === 'ok') {
 
             <input type="hidden" id="modoEvento" name="modoEvento" value="">
             <input type="hidden" id="idEvento" name="idEvento" value="">
-            <input type="hidden" id="idUsuarioOrganizador" name="idUsuarioOrganizador" value="<?php echo $_SESSION['usuario']['idUsuario'] ?>">
+            <input type="hidden" id="idUsuarioOrganizador" name="idUsuarioOrganizador"
+                value="<?php echo $_SESSION['usuario']['idUsuario'] ?>">
 
-            <button id="botonCreateOrUpdate" type="button" onclick="submitEventForm()" class="styled-button">Crear Evento</button>
+            <button id="botonCreateOrUpdate" type="button" onclick="submitEventForm()" class="styled-button">Crear
+                Evento</button>
         </form>
     </div>
 
     <?php
-    
+
     // Mostrar un mensaje estilizado en caso de error al obtener eventos
     echo "<div class='error-message'>No hay eventos creados por usted</div>";
 }

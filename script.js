@@ -9,6 +9,10 @@ const contentContainer = document.getElementById("content-container");
 var openModalBtn = document.getElementById('openModalBtn');
 let overlay;
 
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.style.zoom = '80%';
+});
+
 function showMessage(message, iconClass, messageType) {
     // Crear overlay
     if (!overlay) {
@@ -113,11 +117,11 @@ window.addEventListener("scroll", function () {
 
     if (window.scrollY > 50) {
         navbar.classList.add("scroll");
+        navbar.style.height = "50px"; // Ajusta la altura según sea necesario
     } else {
         navbar.classList.remove("scroll");
+        navbar.style.height = ""; // Restaura la altura predeterminada
     }
-
-    console.log(navbar.classList.contains("scroll")); // Agrega este console.log para verificar
 });
 
 
@@ -445,52 +449,22 @@ function openCreateEventModal(evento) {
         if (evento) {
             var h2Element = document.getElementById('createEventModal').querySelector('h2');
             h2Element.textContent = 'Editar Evento: ' + evento.nombre;
+             // Establecer el valor del select directamente
+            document.getElementById('idLugar').value = evento.idLugar;
             // Preenchir el formulario con los datos del evento
-            var datalist = document.getElementById("suggestionList");
-            datalist.innerHTML = "";
-            var option = document.createElement("option");
-            option.value = evento.nombreLugar;
-            option.textContent = evento.nombreLugar;
             document.getElementById('botonCreateOrUpdate').innerHTML = "Editar Evento";
             document.getElementById('nombre').value = evento.nombre;
             document.getElementById('descripcion').value = evento.descripcion;
             document.getElementById('fecha').value = evento.fecha;
             document.getElementById('hora').value = evento.hora;
-            document.getElementById('nombreLugar').value = evento.nombreLugar;
-            document.getElementById('idLugar').value = evento.idLugar;
             document.getElementById('idUsuarioOrganizador').value = evento.idUsuarioOrganizador;
             document.getElementById('idEvento').value = evento.idEvento;
 
             // Establecer el modo como 'editar' en el campo oculto
             document.getElementById('modoEvento').value = 'editar';
 
-            // Crear la etiqueta img y mostrar la imagen anterior
-            var imagenEventoPreview = document.createElement('img');
-            imagenEventoPreview.id = 'imagenEventoPreview';
-            imagenEventoPreview.src = evento.imagenEvento;
-            imagenEventoPreview.alt = 'Imagen del evento';
+        
 
-            // Estilos para limitar el tamaño del preview y centrarlo
-            imagenEventoPreview.style.maxWidth = '25%';
-            imagenEventoPreview.style.height = 'auto';
-            imagenEventoPreview.style.display = 'block'; // Hacer que la imagen sea un bloque para centrarla
-            imagenEventoPreview.style.margin = 'auto'; // Centrar horizontalmente
-
-            // Insertar la etiqueta img en el documento
-            var previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = ''; // Limpiar cualquier contenido previo
-            previewContainer.appendChild(imagenEventoPreview);
-
-            // Agregar un mensaje de "Imagen actual"
-            var mensajeImagenActual = document.createElement('p');
-            mensajeImagenActual.textContent = 'Imagen actual - Haz clic aqui o en seleccionar archivo para cargar una nueva';
-            mensajeImagenActual.style.textAlign = 'center'; // Centrar el texto
-            previewContainer.appendChild(mensajeImagenActual);
-
-            // Simular clic en el campo input al hacer clic en la imagen
-            imagenEventoPreview.addEventListener('click', function () {
-                document.getElementById('imagenEvento').click();
-            });
 
         } else {
             // Establecer el modo como 'crear' en el campo oculto
@@ -591,66 +565,6 @@ function handleFileSelection() {
     }
 }
 
-async function searchPlace(input) {
-    var datalist = document.getElementById("suggestionList");
-    var hiddenInput = document.getElementById("idLugar");
-    datalist.innerHTML = ""; // Limpiar sugerencias anteriores
-
-    var inputValue = input.value.trim();
-    if (inputValue.length >= 4) {
-        try {
-            // Realizar búsqueda o sugerencias aquí, por ejemplo, desde el servidor
-            var response = await fetch(`lugar.php?input=${inputValue}`);
-            var contentType = response.headers.get("content-type");
-
-            if (contentType && contentType.includes("application/json")) {
-                // Respuesta JSON
-                var data = await response.json();
-
-                // Verificar si hay errores en la respuesta
-                if (data.status === "ok") {
-                    // Agregar sugerencias al datalist
-                    data.result.forEach(function (place) {
-                        var option = document.createElement("option");
-
-                        // Asignar el idLugar al value y mostrar el nombre en el contenido
-                        option.value = place.nombreLugar;
-                        option.textContent = place.nombreLugar;
-
-                        datalist.appendChild(option);
-                        console.log(option.value);
-                    });
-
-                    // Agregar el valor de idLugar al campo oculto
-                    if (data.result.length > 0) {
-                        hiddenInput.value = data.result[0].idLugar; // Asignar el idLugar de la primera sugerencia
-                        console.log("Valor de idLugar asignado:", data.result[0].idLugar);
-                    } else {
-                        hiddenInput.value = ""; // No hay sugerencias, limpiar el valor
-                        console.log("No hay sugerencias, valor de idLugar limpio.");
-                    }
-
-
-                    // Agregar un console.log para imprimir las sugerencias
-                    console.log("Sugerencias:", data.result);
-                } else {
-                    // Manejar el caso de error
-                    console.error("Error en la respuesta del servidor:", data.result.error_msg);
-                }
-            } else {
-                // Respuesta no JSON (puede ser HTML)
-                console.error("Respuesta no JSON:", await response.text());
-                // Puedes manejar el contenido HTML según tus necesidades
-            }
-        } catch (error) {
-            console.error("Error:", error.message);
-        }
-    } else {
-        // Limpiar el valor del campo oculto si la longitud de entrada no es suficiente
-        hiddenInput.value = "";
-    }
-}
-
 function submitEventForm() {
     var eventId = document.getElementById('idEvento').value;
     var modoEvento = document.getElementById('modoEvento').value;
@@ -662,6 +576,16 @@ function submitEventForm() {
     var imagenEventoInput = document.getElementById('imagenEvento');
     var idUsuarioOrganizador = document.getElementById('idUsuarioOrganizador').value;
     var modoEvento = document.getElementById('modoEvento').value;
+    console.log("hola")
+    console.log(fechaEvento)
+    console.log(idLugarEvento)
+
+    // console.log("idlugar",idLugarEvento,"nombreEvento",nombreEvento);
+    if (!nombreEvento || !descripcionEvento || !fechaEvento || !horaEvento || !idLugarEvento) {
+        
+        alert('Todos los campos son obligatorios. Por favor, completa el formulario.');
+        return;
+    }
 
     // Asegúrate de obtener la imagen correctamente si es necesaria
     var imagenEvento = imagenEventoInput.files.length > 0 ? imagenEventoInput.files[0] : null;

@@ -43,16 +43,20 @@ if ($dataArray['status'] === 'ok') {
 
             // Obtener la información del lugar
             $idLugar = $evento['idLugar'];
-            $queryLugar = "SELECT nombreLugar, ciudad, estado, pais FROM lugar WHERE idLugar = '$idLugar'";
-            $resultLugar = $_event->getData($queryLugar);
+                $queryLugar = "SELECT nombreLugar, direccion FROM lugar WHERE idLugar = '$idLugar'";
+                $resultLugar = $_event->getData($queryLugar);
 
-            if ($resultLugar && count($resultLugar) > 0) {
-                $lugar = $resultLugar[0];
-                echo "<p>Lugar: {$lugar['nombreLugar']}, {$lugar['ciudad']}, {$lugar['estado']}, {$lugar['pais']}</p>";
-            } else {
-                echo "<p>Lugar no encontrado</p>";
-            }
-            ?>
+                if ($resultLugar && count($resultLugar) > 0):
+                    $lugar = $resultLugar[0];
+                    $evento['nombreLugar'] = $lugar['nombreLugar'];
+                    ?>
+                    <p>Lugar:
+                        <?= "{$lugar['nombreLugar']}, {$lugar['direccion']}"; ?>
+                    </p>
+                <?php else: ?>
+                    <p>Lugar no encontrado</p>
+                <?php endif; ?>
+            
 
             <!-- Agrega más detalles según sea necesario -->
 
