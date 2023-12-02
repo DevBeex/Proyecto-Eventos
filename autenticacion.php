@@ -101,6 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $dataArray = $_auth->editUser($jsonRequestData);
             break;
 
+        case 'changeAdmin':
+            $idUsuario = $_POST['idUsuario'];
+            $dataArray = $_auth->changeToAdmin($idUsuario);
+            break;
+
+        case 'changeUsuario':
+            $idUsuario = $_POST['idUsuario'];
+            $dataArray = $_auth->changeToUser($idUsuario);
+            break;                                                                                                                                                                                                                                          
+
         default:
             $dataArray = $_responses->error_400(); // Bad Request
             break;

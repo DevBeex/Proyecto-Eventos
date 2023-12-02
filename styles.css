@@ -830,3 +830,16 @@ form button:hover {
     text-align: center;
     margin-top: 170px;
 }
+.centered-container {
+    text-align: center;
+}
+
+.admin-message {
+    font-size: 1.4em; /* Tamaño del texto */
+    color: white;
+    margin-top: 150px; /* Espacio en la parte superior */
+    margin-left: auto; /* Establecer el margen izquierdo y derecho a "auto" */
+    margin-right: auto;
+    margin-bottom: 0px;
+    width: 60%; /* Ancho del contenedor */
+}

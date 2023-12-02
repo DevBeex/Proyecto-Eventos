@@ -1,6 +1,3 @@
-<?php require_once './clases/eventos.class.php';
-
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

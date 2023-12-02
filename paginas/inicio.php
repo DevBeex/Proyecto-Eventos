@@ -13,7 +13,6 @@
             // Mostrar el mensaje de inicio de sesión exitoso
             echo '<script>alert("¡Inicio de sesión exitoso!");
             window.location.href = "index.php";</script>';
-
             exit();
         } elseif ($_GET['mensaje'] === 'registro_exito') {
             // Mostrar un mensaje de registro exitoso sin verificar la sesión del usuario

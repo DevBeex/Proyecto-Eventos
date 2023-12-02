@@ -9,7 +9,7 @@ const contentContainer = document.getElementById("content-container");
 var openModalBtn = document.getElementById('openModalBtn');
 let overlay;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     document.body.style.zoom = '80%';
 });
 
@@ -225,7 +225,7 @@ function handleEventAction(eventId, action, userId) {
             quitarDeFavoritos(eventId, userId);
         } else if (action === 'quitarApuntados') {
             quitarApuntado(eventId, userId);
-        }else if (action === 'eliminarEvento') {
+        } else if (action === 'eliminarEvento') {
             eliminarEvento(eventId);
         }
     } else {
@@ -234,7 +234,7 @@ function handleEventAction(eventId, action, userId) {
     }
 }
 
-function eliminarEvento(eventId){
+function eliminarEvento(eventId) {
     // Realizar la petición AJAX para quitar el evento de favoritos
     const xhr = new XMLHttpRequest();
     xhr.open("DELETE", "evento.php", true);
@@ -258,7 +258,7 @@ function eliminarEvento(eventId){
 
                     // Cargar nuevamente el contenido del tab de "Favoritos"
                     loadPage('misEventos');
-                } else if (response.status === 'error'){
+                } else if (response.status === 'error') {
                     // La operación falló, mostrar un mensaje de error
                     console.log('Error en la operación:', response.result.error_msg);
                     showMessage(response.result.error_msg, 'fas fa-exclamation-circle', 'error');
@@ -449,7 +449,7 @@ function openCreateEventModal(evento) {
         if (evento) {
             var h2Element = document.getElementById('createEventModal').querySelector('h2');
             h2Element.textContent = 'Editar Evento: ' + evento.nombre;
-             // Establecer el valor del select directamente
+            // Establecer el valor del select directamente
             document.getElementById('idLugar').value = evento.idLugar;
             // Preenchir el formulario con los datos del evento
             document.getElementById('botonCreateOrUpdate').innerHTML = "Editar Evento";
@@ -463,7 +463,7 @@ function openCreateEventModal(evento) {
             // Establecer el modo como 'editar' en el campo oculto
             document.getElementById('modoEvento').value = 'editar';
 
-        
+
 
 
         } else {
@@ -582,7 +582,7 @@ function submitEventForm() {
 
     // console.log("idlugar",idLugarEvento,"nombreEvento",nombreEvento);
     if (!nombreEvento || !descripcionEvento || !fechaEvento || !horaEvento || !idLugarEvento) {
-        
+
         alert('Todos los campos son obligatorios. Por favor, completa el formulario.');
         return;
     }
@@ -649,7 +649,7 @@ function handleEventCreation(response) {
 }
 
 function editarUsuario() {
- 
+
     // Obtener los valores de los campos
     var nombre = document.getElementById('nombre').value;
     var apellido = document.getElementById('apellido').value;
@@ -674,30 +674,30 @@ function editarUsuario() {
         method: 'POST',
         body: formData,
     })
-    .then(response => response.json())
-    .then(data => {
-        // Independientemente del código de estado, puedes manejar la respuesta JSON
-        if (data.status === 'ok') {
-            // La operación fue exitosa, mostrar un mensaje de éxito
-            console.log('Operación exitosa:', data.result.message);
-            // Puedes realizar acciones adicionales aquí, como actualizar la interfaz de usuario
-            // Por ejemplo, mostrar un mensaje de éxito en la interfaz
-            alert('Usuario editado con éxito');
-            loadPage('miPerfil')
-        } else if (data.status === 'error') {
-            // La operación falló, mostrar un mensaje de error específico
-            console.log('Error en la operación:', data.result.error_msg);
+        .then(response => response.json())
+        .then(data => {
+            // Independientemente del código de estado, puedes manejar la respuesta JSON
+            if (data.status === 'ok') {
+                // La operación fue exitosa, mostrar un mensaje de éxito
+                console.log('Operación exitosa:', data.result.message);
+                // Puedes realizar acciones adicionales aquí, como actualizar la interfaz de usuario
+                // Por ejemplo, mostrar un mensaje de éxito en la interfaz
+                alert('Usuario editado con éxito');
+                loadPage('miPerfil')
+            } else if (data.status === 'error') {
+                // La operación falló, mostrar un mensaje de error específico
+                console.log('Error en la operación:', data.result.error_msg);
+                // Puedes realizar acciones adicionales aquí, como mostrar un mensaje de error en la interfaz
+                alert('Error al editar usuario: ' + data.result.error_msg);
+                loadPage('miPerfil')
+            }
+        })
+        .catch(error => {
+            // La petición falló, mostrar un mensaje de error genérico
+            console.error('Error en la petición:', error);
             // Puedes realizar acciones adicionales aquí, como mostrar un mensaje de error en la interfaz
-            alert('Error al editar usuario: ' + data.result.error_msg);
-            loadPage('miPerfil')
-        }
-    })
-    .catch(error => {
-        // La petición falló, mostrar un mensaje de error genérico
-        console.error('Error en la petición:', error);
-        // Puedes realizar acciones adicionales aquí, como mostrar un mensaje de error en la interfaz
-        alert('Error en la petición al editar usuario2');
-    });
+            alert('Error en la petición al editar usuario, puede ser el correo');
+        });
 }
 
 function validarEdicionUsuario() {
@@ -720,4 +720,59 @@ function validarEdicionUsuario() {
 
     // Devolver false para evitar que el formulario se envíe automáticamente
     return false;
+}
+
+function handleChangeUserRole(idUsuario, rol) {
+    // Obtener los valores de los campos
+    console.log(idUsuario)
+    console.log(rol)
+
+    var idUsuario = idUsuario;
+    var rol = rol;
+
+    // Crear un objeto FormData
+    const formData = new FormData();
+
+    // Agregar los campos al FormData
+    formData.append('idUsuario', idUsuario);
+    formData.append('rol', rol);
+
+    // Modificar la URL según el rol
+    var action = '';
+    if (rol === 'administrador') {
+        action = 'changeUsuario';
+    } else if (rol === 'usuario') {
+        action = 'changeAdmin';
+    }
+    formData.append('action', action);
+
+    // Realizar la solicitud fetch
+    fetch('autenticacion.php', {
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Independientemente del código de estado, puedes manejar la respuesta JSON
+            if (data.status === 'ok') {
+                // La operación fue exitosa, mostrar un mensaje de éxito
+                console.log('Operación exitosa:', data.result.message);
+                // Puedes realizar acciones adicionales aquí, como actualizar la interfaz de usuario
+                // Por ejemplo, mostrar un mensaje de éxito en la interfaz
+                alert('' + data.result.message);
+                loadPage('usuarios')
+            } else if (data.status === 'error') {
+                // La operación falló, mostrar un mensaje de error específico
+                console.log('Error en la operación:', data.result.error_msg);
+                // Puedes realizar acciones adicionales aquí, como mostrar un mensaje de error en la interfaz
+                alert('Error al editar usuario: ' + data.result.error_msg);
+                loadPage('usuarios')
+            }
+        })
+        .catch(error => {
+            // La petición falló, mostrar un mensaje de error genérico
+            console.error('Error en la petición:', error);
+            // Puedes realizar acciones adicionales aquí, como mostrar un mensaje de error en la interfaz
+            alert('Error en la petición al editar usuario.');
+        });
 }
