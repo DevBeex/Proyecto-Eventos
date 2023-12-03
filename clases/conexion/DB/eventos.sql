@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-12-2023 a las 01:09:09
--- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.0.28
+-- Tiempo de generación: 03-12-2023 a las 08:20:53
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -33,6 +33,16 @@ CREATE TABLE `asistente` (
   `idEvento` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `asistente`
+--
+
+INSERT INTO `asistente` (`idAsistente`, `idUsuarioAsistente`, `idEvento`) VALUES
+(5, 1, 10),
+(7, 1, 11),
+(8, 1, 12),
+(9, 1, 13);
+
 -- --------------------------------------------------------
 
 --
@@ -55,7 +65,11 @@ CREATE TABLE `evento` (
 --
 
 INSERT INTO `evento` (`idEvento`, `nombre`, `descripcion`, `fecha`, `hora`, `idUsuarioOrganizador`, `idLugar`, `imagenEvento`) VALUES
-(4, 'evento chingon', 'sdsds', '1212-12-12', '00:00:00', 1, 14, './imagenes/656a5b5c47a8a_evento chingon.jpg');
+(8, 'Fiesta', 'Lorem ipsum dolor sit amet', '2023-11-30', '03:31:00', 1, 2, './imagenes/656c208e9c0ec_Fiesta.jpg'),
+(10, 'Reunion', 'Lorem ipsum dolor sit amet', '2023-12-12', '00:12:00', 1, 17, './imagenes/656c20c5da488_Reunion.jpg'),
+(11, 'Graduacion', 'random', '2024-09-01', '00:12:00', 1, 13, './imagenes/656c20de836bb_Graduacion.jpg'),
+(12, '15 Años', 'Lorem ipsum dolor sit amet', '2025-09-09', '13:34:00', 1, 8, './imagenes/656c21912088d_15 Años.jpg'),
+(13, 'Concierto', 'Lorem ipsum dolor sit amet', '2029-10-16', '15:37:00', 1, 9, './imagenes/656c21c402af1_Concierto.jpg');
 
 -- --------------------------------------------------------
 
@@ -74,7 +88,10 @@ CREATE TABLE `eventofavorito` (
 --
 
 INSERT INTO `eventofavorito` (`idFavorito`, `idUsuario`, `idEvento`) VALUES
-(2, 1, 4);
+(3, 1, 8),
+(4, 1, 10),
+(5, 1, 11),
+(6, 1, 12);
 
 -- --------------------------------------------------------
 
@@ -135,8 +152,16 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `correoElectronico`, `contrasena`, `rol`) VALUES
-(1, 'Benjamin22', 'Rodriguez2', 'benjarod@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 'usuario'),
-(2, 'Benjamin', 'Rodriguez', 'benjarod2@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 'usuario');
+(1, 'Benjamin', 'Rodriguez', 'benjarod@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 'usuario'),
+(2, 'Benjamin', 'Rodriguez', 'benjarod2@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 'usuario'),
+(3, 'Juan', 'Pérez', 'juan@example.com', 'f1b4dea0aceeb5b732d62bad9545cd35', 'usuario'),
+(4, 'María', 'López', 'maria@example.com', 'c9050e7078a260e808a8991e5cc1b3f0', 'administrador'),
+(5, 'Carlos', 'González', 'carlos@example.com', '90fe2049445178a1840bd71dc6c07ce8', 'usuario'),
+(6, 'Laura', 'Martínez', 'laura@example.com', '9794230d6e317739e0d2a1be87becb94', 'usuario'),
+(7, 'Pedro', 'Sánchez', 'pedro@example.com', '6bf1c4df57af5ade48b354bf959b4464', 'administrador'),
+(8, 'Ana', 'García', 'ana@example.com', '91a81c79944c294500eca88bd906ed13', 'usuario'),
+(9, 'Alejandro', 'Fernández', 'alejandro@example.com', '1abc9603f106657665bcdd608f302b0b', 'usuario'),
+(10, 'Natalia', 'Hernández', 'natalia@example.com', '8b07327223bcdd1a7c4e16fd9bf04831', 'usuario');
 
 --
 -- Índices para tablas volcadas
@@ -187,19 +212,19 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `asistente`
 --
 ALTER TABLE `asistente`
-  MODIFY `idAsistente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `idAsistente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `evento`
 --
 ALTER TABLE `evento`
-  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `eventofavorito`
 --
 ALTER TABLE `eventofavorito`
-  MODIFY `idFavorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idFavorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `lugar`
@@ -211,7 +236,7 @@ ALTER TABLE `lugar`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Restricciones para tablas volcadas
