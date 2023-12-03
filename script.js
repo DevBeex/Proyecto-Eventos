@@ -776,3 +776,13 @@ function handleChangeUserRole(idUsuario, rol) {
             alert('Error en la petición al editar usuario.');
         });
 }
+
+// Agrega la función para mostrar/ocultar los detalles
+function toggleDetails(id) {
+    var details = document.getElementById(id);
+    if (details.style.display === "none") {
+        details.style.display = "block";
+    } else {
+        details.style.display = "none";
+    }
+}

@@ -2,24 +2,24 @@
 require_once 'conexion/conexion.php';
 require_once 'respuestas.class.php';
 
-class lugar extends conection
+class Lugar extends conection
 {
-    public function getPlaces($entrada)
+    public function getLugares()
     {
         $_responses = new responses();
 
-        // Consulta para buscar lugares que coincidan con la entrada del usuario
-        $query = "SELECT idLugar, nombreLugar FROM lugar WHERE nombreLugar LIKE '%$entrada%'";
+        // Consulta para obtener todos los datos de los lugares
+        $query = "SELECT * FROM lugar";
         $resultado = parent::getData($query);
 
         if ($resultado) {
-            // Éxito al obtener los eventos
+            // Éxito al obtener los lugares
             $response = $_responses->response;
             $response["result"] = $resultado;
             return $response;
         } else {
             // Error interno del servidor
-            return $_responses->error_500("no se pudieron obtener la lista de lugares");
+            return $_responses->error_500("No se pudieron obtener los datos de los lugares");
         }
     }
 }

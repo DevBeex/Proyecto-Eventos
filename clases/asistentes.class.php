@@ -150,4 +150,22 @@ class Assistant extends conection
             return $_responses->error_500("Error al quitar al asistente del evento");
         }
     }
+
+    public function getAllAssistants()
+    {
+        $_responses = new responses;
+
+        // Obtener la lista de todos los asistentes
+        $query = "SELECT u.nombre AS nombre_usuario, e.nombre AS nombre_evento
+        FROM usuario u
+        INNER JOIN asistente a ON u.idUsuario = a.idUsuarioAsistente
+        INNER JOIN evento e ON a.idEvento = e.idEvento";
+        $result = parent::getData($query);
+
+        // Éxito al obtener la lista de asistentes
+        $response = $_responses->response;
+        $response["result"] = $result;
+        return $response;
+    }
+
 }

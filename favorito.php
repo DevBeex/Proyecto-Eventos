@@ -44,17 +44,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         http_response_code(200);
     }
     echo json_encode($dataArray);
-}elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
+} elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // Obtener el ID del usuario desde la consulta
     $userId = $_GET['userId'] ?? null;
+    $action = $_GET['action'] ?? null;
 
-    // Validar que se proporcionó el ID del usuario
-    if (empty($userId)) {
-        $dataArray = $_responses->error_400("No se proporcionó el ID del usuario"); // Bad Request
+    if ($action == 'getAll') {
+        $dataArray = $_favorite->getAllFavorites();
     } else {
-        $dataArray = $_favorite->getUserFavorites($userId);
+        // Validar que se proporcionó el ID del usuario
+        if (empty($userId)) {
+            $dataArray = $_responses->error_400("No se proporcionó el ID del usuario"); // Bad Request
+        } else {
+            $dataArray = $_favorite->getUserFavorites($userId);
+        }
     }
-
+    
     // Devolver respuestas
     header('Content-Type: application/json');
     if (isset($dataArray["result"]["error_id"])) {

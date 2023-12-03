@@ -27,6 +27,7 @@ if (isset($_SESSION['usuario']) && isset($_SESSION['usuario']['rol'])) {
         echo '<li><a href="#apuntados">Apuntados</a></li>';
         echo '<li><a href="#favoritos">Favoritos</a></li>';
         echo '<li><a href="#miPerfil">Mi perfil</a></li>';
+        echo '<li><a href="#api">API</a></li>';
     }
 
     echo '</ul>';

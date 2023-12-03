@@ -843,3 +843,68 @@ form button:hover {
     margin-bottom: 0px;
     width: 60%; /* Ancho del contenedor */
 }
+
+/* Estilo de la caja blanca */
+.caja-blanca {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 40px auto;
+    max-width: 1000px;
+    position: relative;
+    margin-top: 100px;
+}
+
+/* Estilo del título principal */
+.caja-blanca h1 {
+    font-size: 32px; /* Tamaño del título */
+    color: #333; /* Color del texto */
+    margin-bottom: 20px; /* Espaciado inferior */
+}
+
+.endpoint {
+    margin-bottom: 20px;
+}
+
+/* Estilo del título de la sección */
+.caja-blanca h2 {
+    font-size: 24px; /* Tamaño del título */
+    color: #2196F3; /* Color del texto */
+    margin-bottom: 10px; /* Espaciado inferior */
+}
+
+/* Estilo del párrafo de la sección */
+.caja-blanca p {
+    margin-bottom: 15px; /* Espaciado inferior */
+}
+
+/* Estilo de la caja de la descripción */
+.caja-blanca .url-mini-box {
+    background-color: rgba(76, 175, 80, 0.3); /* Color de fondo transparente */
+    color: #333; /* Color del texto */
+    padding: 10px; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondos */
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.caja-blanca .url-label {
+    margin-right: 5px;
+}
+
+.caja-blanca .url-code {
+    font-family: 'Courier New', monospace;
+}
+
+.caja-blanca .try-button {
+    display: inline-block;
+    background-color: #2196F3;
+    color: #fff;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+

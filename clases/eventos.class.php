@@ -241,9 +241,7 @@ class event extends conection
             return $_responses->error_500("Error al eliminar el evento");
         }
     }
-
-
-
+    
     public function getAllEvents()
     {
         $_responses = new responses;

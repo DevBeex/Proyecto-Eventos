@@ -125,4 +125,24 @@ class favorite extends conection
 
         return !empty($result);
     }
+
+    public function getAllFavorites()
+{
+    $_responses = new responses;
+
+    // Obtener todos los registros de la tabla eventofavorito
+    $query = "SELECT * FROM eventofavorito";
+    $result = parent::getData($query);
+
+    if (!empty($result)) {
+        // Éxito al obtener todos los registros de favoritos
+        $response = $_responses->response;
+        $response["result"] = $result;
+        return $response;
+    } else {
+        // No se encontraron registros de favoritos
+        return $_responses->error_400("No se encontraron registros en la tabla de favoritos");
+    }
+}
+
 }

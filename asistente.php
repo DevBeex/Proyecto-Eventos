@@ -24,14 +24,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // Obtener el ID del evento desde la URL
     $eventId = $_GET['eventId'] ?? null;
-
-    // Validar que se proporcionó el ID del evento
-    if (!$eventId) {
-        $dataArray = $_responses->error_400("No se proporcionó el ID del evento"); // Bad Request
+    $action = $_GET['action'] ?? null;
+    if ($action == 'getAll') {
+        $dataArray = $_assistant->getAllAssistants();
     } else {
-        $dataArray = $_assistant->getEventParticipants($eventId);
+        // Validar que se proporcionó el ID del evento
+        if (!$eventId) {
+            $dataArray = $_responses->error_400("No se proporcionó el ID del evento"); // Bad Request
+        } else {
+            $dataArray = $_assistant->getEventParticipants($eventId);
+        }
     }
-
     // Devolver respuestas
     header('Content-Type: application/json');
     if (isset($dataArray["result"]["error_id"])) {
