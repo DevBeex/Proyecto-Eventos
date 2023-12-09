@@ -1,3 +1,19 @@
+<?php
+
+// Verificar si la cookie 'correoElectronico' existe
+if (isset($_COOKIE['correoElectronico'])) {
+    $correoElectronicoCookieValue = $_COOKIE['correoElectronico'];
+} else {
+    $correoElectronicoCookieValue = "";
+}
+
+// Verificar si la cookie 'contrasena' existe
+if (isset($_COOKIE['contrasena'])) {
+    $contrasenaCookieValue = $_COOKIE['contrasena'];
+} else {
+    $contrasenaCookieValue = "";
+}
+?>
 <div class="blur-bg-overlay"></div>
 <div class="form-popup">
     <span class="close-btn material-symbols-rounded">close</span>
@@ -9,11 +25,11 @@
             <h2>Iniciar Sesion</h2>
             <form id="loginForm" action="autenticacion.php" method="POST">
                 <div class="input-field">
-                    <input type="text" name="correoElectronico" required pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                    <input type="text" name="correoElectronico" required pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" value="<?= $correoElectronicoCookieValue ?>">
                     <label>Email</label>
                 </div>
                 <div class="input-field">
-                    <input type="password" name="contrasena" required>
+                    <input type="password" name="contrasena" required value="<?= $contrasenaCookieValue ?>">
                     <label>Clave</label>
                 </div>
 
@@ -61,7 +77,7 @@
     </div>
 </div>
 <script>
-    document.getElementById('loginForm').addEventListener('submit', function (event) {
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
         // Evita que el formulario se envíe automáticamente
         event.preventDefault();
 
@@ -72,7 +88,7 @@
         }
     });
 
-    document.getElementById('signupForm').addEventListener('submit', function (event) {
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
         // Evita que el formulario se envíe automáticamente
         event.preventDefault();
 

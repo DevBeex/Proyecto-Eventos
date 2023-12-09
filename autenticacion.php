@@ -31,8 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Verificar si el inicio de sesión fue exitoso
             if ($dataArray['status'] === 'ok') {
                 $_SESSION['mensaje'] = "¡Inicio de sesión exitoso para el usuario '$correoElectronico'!";
+
+                // Crear la cookie
+                setcookie('correoElectronico', $requestData['correoElectronico'], time() + (10 * 365 * 24 * 60 * 60), '/');
+                setcookie('contrasena', $requestData['contrasena'], time() + (10 * 365 * 24 * 60 * 60), '/');
+                
                 // Redirigir a inicio.php con el mensaje como parámetro de URL
-                // header('Location: index.php?mensaje=exito');
                 echo '<script>';
                 echo 'window.location.href = "index.php?mensaje=exito";';
                 echo '</script>';
@@ -109,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         case 'changeUsuario':
             $idUsuario = $_POST['idUsuario'];
             $dataArray = $_auth->changeToUser($idUsuario);
-            break;                                                                                                                                                                                                                                          
+            break;
 
         default:
             $dataArray = $_responses->error_400(); // Bad Request
@@ -127,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         http_response_code(200);
     }
     echo json_encode($dataArray);
-}else if ($_SERVER['REQUEST_METHOD'] == 'GET'){
+} else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $dataArray = $_auth->getAllUsers();
 
     //Devolvemos respuestas
@@ -140,7 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         http_response_code(200);
     }
     echo json_encode($dataArray);
-
 } else {
     header('Content-Type: application/json');
     $dataArray = $_responses->error_405();

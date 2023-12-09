@@ -278,6 +278,7 @@ if ($dataArray['status'] === 'ok') {
     /* Estilos para el contenedor del botón */
     .create-event-button-container {
         margin-top: 125px;
+        margin-left: 500px;
         /* Ajusta la distancia desde la parte superior */
     }
 
