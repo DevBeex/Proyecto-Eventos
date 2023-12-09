@@ -908,3 +908,62 @@ form button:hover {
     margin-left: 10px;
 }
 
+/* Estilo de la caja personalizada */
+.mi-caja-personalizada {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 40px auto;
+    max-width: 1200px;
+    position: relative;
+    margin-top: 150px;
+}
+
+/* Estilo del título principal en la caja personalizada */
+.mi-caja-personalizada h1 {
+    font-size: 32px; /* Tamaño del título */
+    color: #333; /* Color del texto */
+    margin-bottom: 20px; /* Espaciado inferior */
+}
+
+/* Estilo del título de la sección en la caja personalizada */
+.mi-caja-personalizada h2 {
+    font-size: 24px; /* Tamaño del título */
+    color: #2196F3; /* Color del texto */
+    margin-bottom: 10px; /* Espaciado inferior */
+}
+
+/* Estilo del párrafo de la sección en la caja personalizada */
+.mi-caja-personalizada p {
+    margin-bottom: 15px; /* Espaciado inferior */
+}
+
+/* Estilo de la caja de la descripción en la caja personalizada */
+.mi-caja-personalizada .url-mini-box {
+    background-color: rgba(76, 175, 80, 0.3); /* Color de fondo transparente */
+    color: #333; /* Color del texto */
+    padding: 10px; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondos */
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.mi-caja-personalizada .url-label {
+    margin-right: 5px;
+}
+
+.mi-caja-personalizada .url-code {
+    font-family: 'Courier New', monospace;
+}
+
+.mi-caja-personalizada .try-button {
+    display: inline-block;
+    background-color: #2196F3;
+    color: #fff;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 10px;
+}

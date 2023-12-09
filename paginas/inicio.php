@@ -1,4 +1,4 @@
-<div>
+<div class="mi-caja-personalizada">
     <!-- Contenido de inicio.php -->
 
     <?php
@@ -11,29 +11,19 @@
     if (isset($_GET['mensaje'])) {
         if ($_GET['mensaje'] === 'exito') {
             // Mostrar el mensaje de inicio de sesión exitoso
-            echo '<script>alert("¡Inicio de sesión exitoso!");
-            window.location.href = "index.php";</script>';
+            echo '<script>alert("¡Inicio de sesión exitoso!"); window.location.href = "index.php";</script>';
             exit();
         } elseif ($_GET['mensaje'] === 'registro_exito') {
             // Mostrar un mensaje de registro exitoso sin verificar la sesión del usuario
-            echo '<script>alert("¡Registro exitoso!"); 
-            window.location.href = "index.php";</script>';
+            echo '<script>alert("¡Registro exitoso!"); window.location.href = "index.php";</script>';
             exit();
         }
     }
-
-    // Verificar si el usuario ha iniciado sesión
-    if (isset($_SESSION['usuario'])) {
-        // Mostrar un saludo personalizado
-        echo '<p>Hola, ' . $_SESSION['usuario']['nombre'] . '!</p>';
-        // Imprimir todo el contenido de $_SESSION['usuario']
-        echo '<pre>';
-        print_r($_SESSION['usuario']);
-        echo '</pre>';
-    } else {
-        echo "Hola Invitado";
-    }
     ?>
 
+    <!-- Agregar la imagen con estilos CSS -->
+    <img src="images/inicio.png" style="width: 100%; height: 100%; object-fit: cover;" alt="Descripción de la imagen">
+
 </div>
+
 
