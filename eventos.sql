@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-12-2023 a las 08:20:53
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Tiempo de generación: 10-12-2023 a las 00:35:01
+-- Versión del servidor: 10.4.28-MariaDB
+-- Versión de PHP: 8.1.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -38,10 +38,9 @@ CREATE TABLE `asistente` (
 --
 
 INSERT INTO `asistente` (`idAsistente`, `idUsuarioAsistente`, `idEvento`) VALUES
-(5, 1, 10),
-(7, 1, 11),
-(8, 1, 12),
-(9, 1, 13);
+(6, 10, 12),
+(7, 11, 10),
+(8, 11, 11);
 
 -- --------------------------------------------------------
 
@@ -65,11 +64,14 @@ CREATE TABLE `evento` (
 --
 
 INSERT INTO `evento` (`idEvento`, `nombre`, `descripcion`, `fecha`, `hora`, `idUsuarioOrganizador`, `idLugar`, `imagenEvento`) VALUES
-(8, 'Fiesta', 'Lorem ipsum dolor sit amet', '2023-11-30', '03:31:00', 1, 2, './imagenes/656c208e9c0ec_Fiesta.jpg'),
-(10, 'Reunion', 'Lorem ipsum dolor sit amet', '2023-12-12', '00:12:00', 1, 17, './imagenes/656c20c5da488_Reunion.jpg'),
-(11, 'Graduacion', 'random', '2024-09-01', '00:12:00', 1, 13, './imagenes/656c20de836bb_Graduacion.jpg'),
-(12, '15 Años', 'Lorem ipsum dolor sit amet', '2025-09-09', '13:34:00', 1, 8, './imagenes/656c21912088d_15 Años.jpg'),
-(13, 'Concierto', 'Lorem ipsum dolor sit amet', '2029-10-16', '15:37:00', 1, 9, './imagenes/656c21c402af1_Concierto.jpg');
+(9, 'Fiesta', 'una fiesta para celebrar el fin de año', '2023-12-25', '00:00:00', 8, 2, './imagenes/6574f640a5514_Fiesta.jpg'),
+(10, '15 Años', 'la celebración de 15 años de la hija de un compañero de la fisc', '2024-12-10', '15:00:00', 8, 21, './imagenes/6574f6c41cfe1_15 Años.jpg'),
+(11, 'Partido FISC vs Mello', 'un partido de futbol entre los estudiantes de FISC contra los empleados de Mello', '2024-01-01', '09:00:00', 8, 14, './imagenes/6574f7224a7e4_Partido FISC vs Mello.jpg'),
+(12, 'Desfile del 3 de noviembre', 'ven a celebrar el 3 de noviembre en las calles de Panamá', '2023-11-03', '10:00:00', 8, 2, './imagenes/6574f78151083_Desfile del 3 de noviembre.jpg'),
+(13, 'Cena de fin de año', 'ven a la cena de fin de año de la FISC', '2023-12-31', '23:00:00', 10, 9, './imagenes/6574f7ffe5f9d_Cena de fin de año.jpg'),
+(14, 'Concierto del club de musica', 'escucha al club de musica de la FISC', '2024-10-10', '13:00:00', 10, 13, './imagenes/6574f8714e42e_Concierto del club de musica.jpg'),
+(15, 'Estudio para el examen de calculo 2', 'nos reuniremos para estudiar el examen final de calculo 2 del profesor [X]', '2023-06-12', '13:00:00', 11, 10, './imagenes/6574f8ffb0f76_Estudio para el examen de calculo 2.jpg'),
+(16, 'Este es un evento de prueba', 'veremos si la img default funciona bien', '2013-12-23', '13:13:00', 11, 9, './imagenes/6574f9238f9f4_Este es un evento de prueba.jpg');
 
 -- --------------------------------------------------------
 
@@ -88,10 +90,10 @@ CREATE TABLE `eventofavorito` (
 --
 
 INSERT INTO `eventofavorito` (`idFavorito`, `idUsuario`, `idEvento`) VALUES
-(3, 1, 8),
-(4, 1, 10),
-(5, 1, 11),
-(6, 1, 12);
+(4, 10, 11),
+(5, 10, 9),
+(6, 11, 13),
+(7, 11, 14);
 
 -- --------------------------------------------------------
 
@@ -110,7 +112,6 @@ CREATE TABLE `lugar` (
 --
 
 INSERT INTO `lugar` (`idLugar`, `nombreLugar`, `direccion`) VALUES
-(1, 'panama', 'parque omar torrijos noseque'),
 (2, 'Ciudad de Panamá', 'Avenida Principal 123'),
 (3, 'Casco Antiguo', 'Calle Histórica 456'),
 (4, 'Bocas del Toro', 'Playa Hermosa 789'),
@@ -152,16 +153,10 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `correoElectronico`, `contrasena`, `rol`) VALUES
-(1, 'Benjamin', 'Rodriguez', 'benjarod@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 'usuario'),
-(2, 'Benjamin', 'Rodriguez', 'benjarod2@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 'usuario'),
-(3, 'Juan', 'Pérez', 'juan@example.com', 'f1b4dea0aceeb5b732d62bad9545cd35', 'usuario'),
-(4, 'María', 'López', 'maria@example.com', 'c9050e7078a260e808a8991e5cc1b3f0', 'administrador'),
-(5, 'Carlos', 'González', 'carlos@example.com', '90fe2049445178a1840bd71dc6c07ce8', 'usuario'),
-(6, 'Laura', 'Martínez', 'laura@example.com', '9794230d6e317739e0d2a1be87becb94', 'usuario'),
-(7, 'Pedro', 'Sánchez', 'pedro@example.com', '6bf1c4df57af5ade48b354bf959b4464', 'administrador'),
-(8, 'Ana', 'García', 'ana@example.com', '91a81c79944c294500eca88bd906ed13', 'usuario'),
-(9, 'Alejandro', 'Fernández', 'alejandro@example.com', '1abc9603f106657665bcdd608f302b0b', 'usuario'),
-(10, 'Natalia', 'Hernández', 'natalia@example.com', '8b07327223bcdd1a7c4e16fd9bf04831', 'usuario');
+(8, 'Juan', 'Pérez', 'juan@example.com', 'f8032d5cae3de20fcec887f395ec9a6a', 'usuario'),
+(9, 'Admin', 'Admin', 'admin@example.com', '21232f297a57a5a743894a0e4a801fc3', 'administrador'),
+(10, 'María', 'Gómez', 'maria@example.com', 'f8032d5cae3de20fcec887f395ec9a6a', 'usuario'),
+(11, 'Pedro', 'Rodríguez', 'pedro@example.com', 'f8032d5cae3de20fcec887f395ec9a6a', 'usuario');
 
 --
 -- Índices para tablas volcadas
@@ -212,19 +207,19 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `asistente`
 --
 ALTER TABLE `asistente`
-  MODIFY `idAsistente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `idAsistente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `evento`
 --
 ALTER TABLE `evento`
-  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `idEvento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `eventofavorito`
 --
 ALTER TABLE `eventofavorito`
-  MODIFY `idFavorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idFavorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `lugar`
@@ -236,7 +231,7 @@ ALTER TABLE `lugar`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Restricciones para tablas volcadas
